@@ -3,28 +3,41 @@ import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Upload, Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+
+interface StoredFile {
+  id: string;
+  name: string;
+  size: number;
+  uploadDate: string;
+}
 
 const MAX_STORAGE_GB = 5;
 const MAX_STORAGE_BYTES = MAX_STORAGE_GB * 1024 * 1024 * 1024;
 
 const Documents = () => {
   const [usedStorage, setUsedStorage] = useState(0);
+  const [files, setFiles] = useState<StoredFile[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    // In a real app, this would be fetched from the backend
+    // Load stored files and usage from localStorage
+    const storedFiles = localStorage.getItem('storedFiles');
     const storedUsage = localStorage.getItem('storageUsed');
+    
+    if (storedFiles) {
+      setFiles(JSON.parse(storedFiles));
+    }
     if (storedUsage) {
       setUsedStorage(parseInt(storedUsage));
     }
   }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files?.length) return;
+    const uploadedFiles = event.target.files;
+    if (!uploadedFiles?.length) return;
 
-    const totalSize = Array.from(files).reduce((acc, file) => acc + file.size, 0);
+    const totalSize = Array.from(uploadedFiles).reduce((acc, file) => acc + file.size, 0);
     const newTotalSize = usedStorage + totalSize;
 
     if (newTotalSize > MAX_STORAGE_BYTES) {
@@ -36,13 +49,47 @@ const Documents = () => {
       return;
     }
 
-    // TODO: Implement actual file upload functionality
+    const newFiles = Array.from(uploadedFiles).map(file => ({
+      id: crypto.randomUUID(),
+      name: file.name,
+      size: file.size,
+      uploadDate: new Date().toISOString(),
+    }));
+
+    const updatedFiles = [...files, ...newFiles];
+    setFiles(updatedFiles);
     setUsedStorage(newTotalSize);
+    
+    // Save to localStorage
+    localStorage.setItem('storedFiles', JSON.stringify(updatedFiles));
     localStorage.setItem('storageUsed', newTotalSize.toString());
     
     toast({
       title: "Files uploaded successfully",
-      description: `${files.length} files uploaded`,
+      description: `${uploadedFiles.length} files uploaded`,
+    });
+
+    // Reset the input
+    event.target.value = '';
+  };
+
+  const handleDeleteFile = (fileId: string) => {
+    const fileToDelete = files.find(f => f.id === fileId);
+    if (!fileToDelete) return;
+
+    const updatedFiles = files.filter(f => f.id !== fileId);
+    const newUsedStorage = usedStorage - fileToDelete.size;
+
+    setFiles(updatedFiles);
+    setUsedStorage(newUsedStorage);
+
+    // Update localStorage
+    localStorage.setItem('storedFiles', JSON.stringify(updatedFiles));
+    localStorage.setItem('storageUsed', newUsedStorage.toString());
+
+    toast({
+      title: "File deleted",
+      description: `${fileToDelete.name} has been removed`,
     });
   };
 
@@ -52,6 +99,14 @@ const Documents = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   const usedPercentage = (usedStorage / MAX_STORAGE_BYTES) * 100;
@@ -104,9 +159,35 @@ const Documents = () => {
 
             <div className="mt-8">
               <h3 className="text-lg font-medium mb-4">Recent Documents</h3>
-              <div className="text-sm text-neutral-500 text-center py-8">
-                No documents uploaded yet
-              </div>
+              {files.length === 0 ? (
+                <div className="text-sm text-neutral-500 text-center py-8">
+                  No documents uploaded yet
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {files.map((file) => (
+                    <div
+                      key={file.id}
+                      className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
+                    >
+                      <div>
+                        <h4 className="font-medium">{file.name}</h4>
+                        <p className="text-sm text-neutral-600">
+                          {formatBytes(file.size)} • Uploaded {formatDate(file.uploadDate)}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteFile(file.id)}
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -2,11 +2,21 @@ import { Scale, Briefcase, Clock, Calendar } from 'lucide-react';
 import StatCard from '../components/dashboard/StatCard';
 import Sidebar from '../components/layout/Sidebar';
 import Header from '../components/layout/Header';
+import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
+  const [documentCount, setDocumentCount] = useState(0);
+
+  useEffect(() => {
+    const storedFiles = localStorage.getItem('storedFiles');
+    if (storedFiles) {
+      setDocumentCount(JSON.parse(storedFiles).length);
+    }
+  }, []);
+
   const stats = [
     { title: 'Active Cases', value: 24, icon: Scale, trend: { value: 12, isPositive: true } },
-    { title: 'Documents', value: 156, icon: Briefcase },
+    { title: 'Documents', value: documentCount, icon: Briefcase },
     { title: 'Pending Tasks', value: 8, icon: Clock },
     { title: 'Upcoming Hearings', value: 3, icon: Calendar },
   ];
