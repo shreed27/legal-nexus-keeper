@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Index";
 import Cases from "./pages/Cases";
+import CaseDetails from "./pages/CaseDetails";
 import Search from "./pages/Search";
 import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cases" element={<Cases />} />
+          <Route path="/cases/:id" element={<CaseDetails />} />
           <Route path="/search" element={<Search />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/documents" element={<Documents />} />

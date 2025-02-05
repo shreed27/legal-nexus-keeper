@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
-import { CaseDetailDialog } from "@/components/cases/CaseDetailDialog";
 
 interface Case {
   id: string;
@@ -37,11 +37,10 @@ interface Hearing {
 }
 
 const Cases = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
-  const [showDetailDialog, setShowDetailDialog] = useState(false);
-  const [selectedCase, setSelectedCase] = useState<Case | null>(null);
   const [cases, setCases] = useState<Case[]>([]);
 
   const handleAddCase = (newCase: Case) => {
@@ -53,8 +52,7 @@ const Cases = () => {
   };
 
   const handleCaseClick = (caseData: Case) => {
-    setSelectedCase(caseData);
-    setShowDetailDialog(true);
+    navigate(`/cases/${caseData.id}`);
   };
 
   const filteredCases = cases.filter(
@@ -120,23 +118,6 @@ const Cases = () => {
         open={showNewCaseDialog}
         onOpenChange={setShowNewCaseDialog}
         onSuccess={handleAddCase}
-      />
-
-      <CaseDetailDialog
-        open={showDetailDialog}
-        onOpenChange={setShowDetailDialog}
-        caseData={selectedCase}
-        onAddHearing={(hearing) => {
-          if (selectedCase) {
-            const updatedCase = {
-              ...selectedCase,
-              hearings: [...(selectedCase.hearings || []), hearing],
-              hearings_count: (selectedCase.hearings || []).length + 1,
-            };
-            setCases(cases.map(c => c.id === selectedCase.id ? updatedCase : c));
-            setSelectedCase(updatedCase);
-          }
-        }}
       />
     </div>
   );
