@@ -4,6 +4,7 @@ import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Upload, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PricingModal from "@/components/pricing/PricingModal";
 
 interface StoredFile {
   id: string;
@@ -18,10 +19,10 @@ const MAX_STORAGE_BYTES = MAX_STORAGE_GB * 1024 * 1024 * 1024;
 const Documents = () => {
   const [usedStorage, setUsedStorage] = useState(0);
   const [files, setFiles] = useState<StoredFile[]>([]);
+  const [showPricingModal, setShowPricingModal] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load stored files and usage from localStorage
     const storedFiles = localStorage.getItem('storedFiles');
     const storedUsage = localStorage.getItem('storageUsed');
     
@@ -41,11 +42,7 @@ const Documents = () => {
     const newTotalSize = usedStorage + totalSize;
 
     if (newTotalSize > MAX_STORAGE_BYTES) {
-      toast({
-        title: "Storage limit exceeded",
-        description: `You have ${formatBytes(MAX_STORAGE_BYTES - usedStorage)} storage remaining`,
-        variant: "destructive",
-      });
+      setShowPricingModal(true);
       return;
     }
 
@@ -60,7 +57,6 @@ const Documents = () => {
     setFiles(updatedFiles);
     setUsedStorage(newTotalSize);
     
-    // Save to localStorage
     localStorage.setItem('storedFiles', JSON.stringify(updatedFiles));
     localStorage.setItem('storageUsed', newTotalSize.toString());
     
@@ -69,7 +65,6 @@ const Documents = () => {
       description: `${uploadedFiles.length} files uploaded`,
     });
 
-    // Reset the input
     event.target.value = '';
   };
 
@@ -83,7 +78,6 @@ const Documents = () => {
     setFiles(updatedFiles);
     setUsedStorage(newUsedStorage);
 
-    // Update localStorage
     localStorage.setItem('storedFiles', JSON.stringify(updatedFiles));
     localStorage.setItem('storageUsed', newUsedStorage.toString());
 
@@ -192,6 +186,12 @@ const Documents = () => {
           </div>
         </div>
       </main>
+
+      <PricingModal 
+        isOpen={showPricingModal}
+        onClose={() => setShowPricingModal(false)}
+        feature="More Storage"
+      />
     </div>
   );
 };
