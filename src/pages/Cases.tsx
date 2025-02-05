@@ -43,12 +43,14 @@ const Cases = () => {
   const { data: cases, isLoading } = useQuery({
     queryKey: ["cases"],
     queryFn: async () => {
+      console.log("Fetching cases...");
       const { data, error } = await supabase
         .from("cases")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) {
+        console.error("Supabase error:", error);
         toast({
           title: "Error fetching cases",
           description: error.message,
@@ -57,6 +59,7 @@ const Cases = () => {
         throw error;
       }
 
+      console.log("Cases fetched:", data);
       return data as Case[];
     },
   });
