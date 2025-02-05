@@ -6,22 +6,65 @@ import {
 } from "@/components/ui/dialog";
 import { ChartContainer, ChartLegend, ChartTooltip } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+
+interface Hearing {
+  date: string;
+  summary: string;
+  stage: string;
+  amount: number;
+}
 
 interface CaseDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   caseData: any;
+  onAddHearing: (hearing: Hearing) => void;
 }
 
-export function CaseDetailDialog({ open, onOpenChange, caseData }: CaseDetailDialogProps) {
-  const chartData = [
-    { name: "Initial", amount: caseData?.amount_charged || 0 },
-    { name: "Current", amount: caseData?.amount_charged * 1.2 || 0 }, // Example calculation
-  ];
+export function CaseDetailDialog({ open, onOpenChange, caseData, onAddHearing }: CaseDetailDialogProps) {
+  const { toast } = useToast();
+  const [newHearing, setNewHearing] = useState<Hearing>({
+    date: "",
+    summary: "",
+    stage: "",
+    amount: 0,
+  });
+
+  const handleAddHearing = () => {
+    if (!newHearing.date || !newHearing.summary || !newHearing.stage || !newHearing.amount) {
+      toast({
+        title: "Error",
+        description: "Please fill all hearing details",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onAddHearing(newHearing);
+    setNewHearing({
+      date: "",
+      summary: "",
+      stage: "",
+      amount: 0,
+    });
+    toast({
+      title: "Success",
+      description: "Hearing details added successfully",
+    });
+  };
+
+  const chartData = caseData?.hearings?.map((hearing: Hearing) => ({
+    date: hearing.date,
+    amount: hearing.amount,
+  })) || [];
 
   const chartConfig = {
     amount: {
-      label: "Amount",
+      label: "Amount per Hearing",
       theme: {
         light: "#4f46e5",
         dark: "#818cf8",
@@ -50,7 +93,52 @@ export function CaseDetailDialog({ open, onOpenChange, caseData }: CaseDetailDia
               <h3 className="font-semibold text-muted-foreground">Dates</h3>
               <p><span className="font-medium">Previous Date:</span> {caseData?.previous_date}</p>
               <p><span className="font-medium">Next Date:</span> {caseData?.next_date}</p>
-              <p><span className="font-medium">Hearings:</span> {caseData?.hearings_count}</p>
+              <p><span className="font-medium">Total Hearings:</span> {caseData?.hearings?.length || 0}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-semibold text-muted-foreground">Add New Hearing</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="date"
+                value={newHearing.date}
+                onChange={(e) => setNewHearing({ ...newHearing, date: e.target.value })}
+                placeholder="Hearing Date"
+              />
+              <Input
+                type="text"
+                value={newHearing.stage}
+                onChange={(e) => setNewHearing({ ...newHearing, stage: e.target.value })}
+                placeholder="Stage"
+              />
+              <Input
+                type="number"
+                value={newHearing.amount}
+                onChange={(e) => setNewHearing({ ...newHearing, amount: Number(e.target.value) })}
+                placeholder="Amount"
+              />
+              <Input
+                type="text"
+                value={newHearing.summary}
+                onChange={(e) => setNewHearing({ ...newHearing, summary: e.target.value })}
+                placeholder="Summary"
+              />
+            </div>
+            <Button onClick={handleAddHearing}>Add Hearing</Button>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-semibold text-muted-foreground">Hearing History</h3>
+            <div className="space-y-4">
+              {caseData?.hearings?.map((hearing: Hearing, index: number) => (
+                <div key={index} className="p-4 border rounded-lg">
+                  <p><span className="font-medium">Date:</span> {hearing.date}</p>
+                  <p><span className="font-medium">Stage:</span> {hearing.stage}</p>
+                  <p><span className="font-medium">Amount:</span> ₹{hearing.amount}</p>
+                  <p><span className="font-medium">Summary:</span> {hearing.summary}</p>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -60,21 +148,13 @@ export function CaseDetailDialog({ open, onOpenChange, caseData }: CaseDetailDia
               <ChartContainer config={chartConfig}>
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="date" />
                   <YAxis />
                   <ChartTooltip />
                   <Bar dataKey="amount" fill="var(--color-amount)" />
                 </BarChart>
               </ChartContainer>
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="font-semibold text-muted-foreground">Notes</h3>
-            <p className="text-sm text-muted-foreground">
-              This case has been active for {caseData?.hearings_count} hearings.
-              The current stage is {caseData?.stage}.
-            </p>
           </div>
         </div>
       </DialogContent>

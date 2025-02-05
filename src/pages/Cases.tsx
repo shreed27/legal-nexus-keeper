@@ -26,6 +26,14 @@ interface Case {
   stage: string;
   amount_charged: number;
   hearings_count: number;
+  hearings: Hearing[];
+}
+
+interface Hearing {
+  date: string;
+  summary: string;
+  stage: string;
+  amount: number;
 }
 
 const Cases = () => {
@@ -37,7 +45,7 @@ const Cases = () => {
   const [cases, setCases] = useState<Case[]>([]);
 
   const handleAddCase = (newCase: Case) => {
-    setCases([newCase, ...cases]);
+    setCases([{ ...newCase, hearings: [] }, ...cases]);
     toast({
       title: "Success",
       description: "New case has been registered successfully",
@@ -88,8 +96,6 @@ const Cases = () => {
                   <TableHead>Party Name</TableHead>
                   <TableHead>Case No.</TableHead>
                   <TableHead>Court</TableHead>
-                  <TableHead>Next Date</TableHead>
-                  <TableHead>Stage</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -102,8 +108,6 @@ const Cases = () => {
                     <TableCell className="font-medium">{case_.party_name}</TableCell>
                     <TableCell>{case_.case_number}</TableCell>
                     <TableCell>{case_.court_name}</TableCell>
-                    <TableCell>{case_.next_date}</TableCell>
-                    <TableCell>{case_.stage}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -122,6 +126,17 @@ const Cases = () => {
         open={showDetailDialog}
         onOpenChange={setShowDetailDialog}
         caseData={selectedCase}
+        onAddHearing={(hearing) => {
+          if (selectedCase) {
+            const updatedCase = {
+              ...selectedCase,
+              hearings: [...(selectedCase.hearings || []), hearing],
+              hearings_count: (selectedCase.hearings || []).length + 1,
+            };
+            setCases(cases.map(c => c.id === selectedCase.id ? updatedCase : c));
+            setSelectedCase(updatedCase);
+          }
+        }}
       />
     </div>
   );
