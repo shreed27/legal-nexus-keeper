@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, FileText, Search, Layout, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, FileText, Search, Layout, ChevronLeft, ChevronRight, FolderOpen } from 'lucide-react';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
   const menuItems = [
-    { icon: Layout, label: 'Dashboard', path: '/' },
+    { icon: Layout, label: 'Dashboard', path: '/dashboard' },
     { icon: FileText, label: 'Cases', path: '/cases' },
     { icon: Search, label: 'Legal Search', path: '/search' },
     { icon: Calendar, label: 'Calendar', path: '/calendar' },
+    { icon: FolderOpen, label: 'Documents', path: '/documents' },
   ];
 
   return (
