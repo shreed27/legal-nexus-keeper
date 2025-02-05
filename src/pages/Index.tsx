@@ -6,19 +6,55 @@ import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
   const [documentCount, setDocumentCount] = useState(0);
+  const [caseStats, setCaseStats] = useState({
+    totalCases: 0,
+    pendingHearings: 0,
+    upcomingHearings: 0
+  });
 
   useEffect(() => {
     const storedFiles = localStorage.getItem('storedFiles');
     if (storedFiles) {
       setDocumentCount(JSON.parse(storedFiles).length);
     }
+
+    const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
+    const today = new Date();
+    const upcomingHearings = storedCases.reduce((count: number, case_: any) => {
+      const nextDate = new Date(case_.next_date);
+      return nextDate > today ? count + 1 : count;
+    }, 0);
+
+    setCaseStats({
+      totalCases: storedCases.length,
+      pendingHearings: storedCases.reduce((count: number, case_: any) => 
+        count + (case_.hearings?.length || 0), 0),
+      upcomingHearings
+    });
   }, []);
 
   const stats = [
-    { title: 'Active Cases', value: 24, icon: Scale, trend: { value: 12, isPositive: true } },
-    { title: 'Documents', value: documentCount, icon: Briefcase },
-    { title: 'Pending Tasks', value: 8, icon: Clock },
-    { title: 'Upcoming Hearings', value: 3, icon: Calendar },
+    { 
+      title: 'Active Cases', 
+      value: caseStats.totalCases, 
+      icon: Scale, 
+      trend: { value: 12, isPositive: true } 
+    },
+    { 
+      title: 'Documents', 
+      value: documentCount, 
+      icon: Briefcase 
+    },
+    { 
+      title: 'Total Hearings', 
+      value: caseStats.pendingHearings, 
+      icon: Clock 
+    },
+    { 
+      title: 'Upcoming Hearings', 
+      value: caseStats.upcomingHearings, 
+      icon: Calendar 
+    },
   ];
 
   return (
@@ -40,24 +76,29 @@ const Dashboard = () => {
             <div className="bg-white rounded-xl p-6 shadow-sm border border-neutral-100 animate-fade-in">
               <h2 className="text-xl font-bold mb-4">Recent Cases</h2>
               <div className="space-y-4">
-                {[1, 2, 3].map((_, i) => (
-                  <div key={i} className="p-4 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
-                    <h3 className="font-medium">Case #{2024001 + i}</h3>
-                    <p className="text-sm text-neutral-600 mt-1">Last updated 2 hours ago</p>
-                  </div>
-                ))}
+                {JSON.parse(localStorage.getItem('cases') || '[]')
+                  .slice(0, 3)
+                  .map((case_: any, i: number) => (
+                    <div key={i} className="p-4 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
+                      <h3 className="font-medium">{case_.party_name}</h3>
+                      <p className="text-sm text-neutral-600 mt-1">Case #{case_.case_number}</p>
+                    </div>
+                  ))}
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-sm border border-neutral-100 animate-fade-in">
-              <h2 className="text-xl font-bold mb-4">Upcoming Events</h2>
+              <h2 className="text-xl font-bold mb-4">Upcoming Hearings</h2>
               <div className="space-y-4">
-                {[1, 2, 3].map((_, i) => (
-                  <div key={i} className="p-4 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
-                    <h3 className="font-medium">Client Meeting</h3>
-                    <p className="text-sm text-neutral-600 mt-1">Tomorrow at 10:00 AM</p>
-                  </div>
-                ))}
+                {JSON.parse(localStorage.getItem('cases') || '[]')
+                  .filter((case_: any) => new Date(case_.next_date) > new Date())
+                  .slice(0, 3)
+                  .map((case_: any, i: number) => (
+                    <div key={i} className="p-4 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
+                      <h3 className="font-medium">{case_.party_name}</h3>
+                      <p className="text-sm text-neutral-600 mt-1">Next Hearing: {case_.next_date}</p>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

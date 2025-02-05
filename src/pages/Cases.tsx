@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
@@ -15,26 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
-
-interface Case {
-  id: string;
-  case_number: string;
-  party_name: string;
-  court_name: string;
-  previous_date: string;
-  next_date: string;
-  stage: string;
-  amount_charged: number;
-  hearings_count: number;
-  hearings: Hearing[];
-}
-
-interface Hearing {
-  date: string;
-  summary: string;
-  stage: string;
-  amount: number;
-}
+import { Case } from "@/types/case";
 
 const Cases = () => {
   const navigate = useNavigate();
@@ -43,8 +24,17 @@ const Cases = () => {
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
   const [cases, setCases] = useState<Case[]>([]);
 
+  useEffect(() => {
+    const storedCases = localStorage.getItem('cases');
+    if (storedCases) {
+      setCases(JSON.parse(storedCases));
+    }
+  }, []);
+
   const handleAddCase = (newCase: Case) => {
-    setCases([{ ...newCase, hearings: [] }, ...cases]);
+    const updatedCases = [{ ...newCase, hearings: [] }, ...cases];
+    setCases(updatedCases);
+    localStorage.setItem('cases', JSON.stringify(updatedCases));
     toast({
       title: "Success",
       description: "New case has been registered successfully",

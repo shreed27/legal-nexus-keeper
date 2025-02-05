@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ChartContainer, ChartLegend, ChartTooltip } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 
@@ -20,6 +30,8 @@ const CaseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [caseData, setCaseData] = useState<any>(null);
   const [newHearing, setNewHearing] = useState<Hearing>({
     date: "",
     summary: "",
@@ -27,31 +39,15 @@ const CaseDetails = () => {
     amount: 0,
   });
 
-  // For demo purposes, we'll use static data
-  // In a real app, you would fetch this based on the ID
-  const caseData = {
-    id,
-    party_name: "John Doe",
-    case_number: "123/2024",
-    court_name: "Supreme Court",
-    previous_date: "2024-02-01",
-    next_date: "2024-03-15",
-    stage: "Hearing",
-    hearings: [
-      {
-        date: "2024-01-15",
-        summary: "Initial hearing",
-        stage: "Opening",
-        amount: 5000,
-      },
-      {
-        date: "2024-02-01",
-        summary: "Evidence presentation",
-        stage: "Ongoing",
-        amount: 7500,
-      },
-    ],
-  };
+  useEffect(() => {
+    const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
+    const currentCase = storedCases.find((c: any) => c.id === id);
+    if (currentCase) {
+      setCaseData(currentCase);
+    } else {
+      navigate('/cases');
+    }
+  }, [id, navigate]);
 
   const handleAddHearing = () => {
     if (!newHearing.date || !newHearing.summary || !newHearing.stage || !newHearing.amount) {
@@ -63,8 +59,18 @@ const CaseDetails = () => {
       return;
     }
 
-    // In a real app, you would update this in your backend
-    caseData.hearings.push(newHearing);
+    const updatedCase = {
+      ...caseData,
+      hearings: [...(caseData.hearings || []), newHearing],
+    };
+
+    const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
+    const updatedCases = storedCases.map((c: any) => 
+      c.id === id ? updatedCase : c
+    );
+
+    localStorage.setItem('cases', JSON.stringify(updatedCases));
+    setCaseData(updatedCase);
     setNewHearing({
       date: "",
       summary: "",
@@ -77,7 +83,20 @@ const CaseDetails = () => {
     });
   };
 
-  const chartData = caseData.hearings.map((hearing) => ({
+  const handleDeleteCase = () => {
+    const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
+    const updatedCases = storedCases.filter((c: any) => c.id !== id);
+    localStorage.setItem('cases', JSON.stringify(updatedCases));
+    toast({
+      title: "Success",
+      description: "Case deleted successfully",
+    });
+    navigate('/cases');
+  };
+
+  if (!caseData) return null;
+
+  const chartData = (caseData.hearings || []).map((hearing: Hearing) => ({
     date: hearing.date,
     amount: hearing.amount,
   }));
@@ -99,14 +118,22 @@ const CaseDetails = () => {
       
       <main className="ml-64 pt-20 p-8">
         <div className="max-w-7xl mx-auto">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/cases')}
-            className="mb-6"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Cases
-          </Button>
+          <div className="flex justify-between items-center mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/cases')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Cases
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Case
+            </Button>
+          </div>
 
           <div className="space-y-8">
             <div>
@@ -165,7 +192,7 @@ const CaseDetails = () => {
             <div className="space-y-4">
               <h3 className="font-semibold text-muted-foreground">Hearing History</h3>
               <div className="space-y-4">
-                {caseData.hearings.map((hearing, index) => (
+                {(caseData.hearings || []).map((hearing: Hearing, index: number) => (
                   <div key={index} className="p-4 border rounded-lg bg-white">
                     <p><span className="font-medium">Date:</span> {hearing.date}</p>
                     <p><span className="font-medium">Stage:</span> {hearing.stage}</p>
@@ -193,6 +220,22 @@ const CaseDetails = () => {
           </div>
         </div>
       </main>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the case
+              and all its associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteCase}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
