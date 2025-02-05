@@ -3,14 +3,8 @@ import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Search, Trash2 } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -20,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
+import { CaseDetailDialog } from "@/components/cases/CaseDetailDialog";
 
 interface Case {
   id: string;
@@ -36,38 +31,29 @@ interface Case {
 const Cases = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedParty, setSelectedParty] = useState<string | null>(null);
-  const [showPartyStats, setShowPartyStats] = useState(false);
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
+  const [showDetailDialog, setShowDetailDialog] = useState(false);
+  const [selectedCase, setSelectedCase] = useState<Case | null>(null);
   const [cases, setCases] = useState<Case[]>([]);
-
-  const handleDelete = (id: string) => {
-    setCases(cases.filter(case_ => case_.id !== id));
-    toast({
-      title: "Case deleted",
-      description: "The case has been successfully deleted.",
-    });
-  };
 
   const handleAddCase = (newCase: Case) => {
     setCases([newCase, ...cases]);
+    toast({
+      title: "Success",
+      description: "New case has been registered successfully",
+    });
+  };
+
+  const handleCaseClick = (caseData: Case) => {
+    setSelectedCase(caseData);
+    setShowDetailDialog(true);
   };
 
   const filteredCases = cases.filter(
     (case_) =>
       case_.party_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      case_.case_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      case_.court_name.toLowerCase().includes(searchQuery.toLowerCase())
+      case_.case_number.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const getPartyStats = (partyName: string) => {
-    const partyCases = cases.filter((case_) => case_.party_name === partyName);
-    return {
-      totalCases: partyCases.length,
-      totalAmount: partyCases.reduce((sum, case_) => sum + case_.amount_charged, 0),
-      totalHearings: partyCases.reduce((sum, case_) => sum + case_.hearings_count, 0),
-    };
-  };
 
   return (
     <div className="min-h-screen bg-neutral-light">
@@ -95,47 +81,29 @@ const Cases = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-white rounded-lg shadow overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Party Name</TableHead>
-                  <TableHead>Court</TableHead>
                   <TableHead>Case No.</TableHead>
-                  <TableHead>Previous Date</TableHead>
+                  <TableHead>Court</TableHead>
                   <TableHead>Next Date</TableHead>
                   <TableHead>Stage</TableHead>
-                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCases.map((case_) => (
-                  <TableRow key={case_.id}>
-                    <TableCell>
-                      <button
-                        onClick={() => {
-                          setSelectedParty(case_.party_name);
-                          setShowPartyStats(true);
-                        }}
-                        className="text-primary hover:underline"
-                      >
-                        {case_.party_name}
-                      </button>
-                    </TableCell>
-                    <TableCell>{case_.court_name}</TableCell>
+                  <TableRow 
+                    key={case_.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleCaseClick(case_)}
+                  >
+                    <TableCell className="font-medium">{case_.party_name}</TableCell>
                     <TableCell>{case_.case_number}</TableCell>
-                    <TableCell>{case_.previous_date}</TableCell>
+                    <TableCell>{case_.court_name}</TableCell>
                     <TableCell>{case_.next_date}</TableCell>
                     <TableCell>{case_.stage}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(case_.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -144,37 +112,16 @@ const Cases = () => {
         </div>
       </main>
 
-      <Dialog open={showPartyStats} onOpenChange={setShowPartyStats}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Party Statistics</DialogTitle>
-          </DialogHeader>
-          {selectedParty && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">{selectedParty}</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-primary/10 p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Total Cases</p>
-                  <p className="text-2xl font-bold">{getPartyStats(selectedParty).totalCases}</p>
-                </div>
-                <div className="bg-primary/10 p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="text-2xl font-bold">₹{getPartyStats(selectedParty).totalAmount}</p>
-                </div>
-                <div className="bg-primary/10 p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Total Hearings</p>
-                  <p className="text-2xl font-bold">{getPartyStats(selectedParty).totalHearings}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
       <NewCaseDialog 
         open={showNewCaseDialog}
         onOpenChange={setShowNewCaseDialog}
         onSuccess={handleAddCase}
+      />
+
+      <CaseDetailDialog
+        open={showDetailDialog}
+        onOpenChange={setShowDetailDialog}
+        caseData={selectedCase}
       />
     </div>
   );
