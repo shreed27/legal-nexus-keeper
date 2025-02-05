@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
 
 interface Case {
   id: string;
@@ -39,8 +40,9 @@ const Cases = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [showPartyStats, setShowPartyStats] = useState(false);
+  const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
 
-  const { data: cases, isLoading, error } = useQuery({
+  const { data: cases, isLoading, error, refetch } = useQuery({
     queryKey: ["cases"],
     queryFn: async () => {
       console.log("Fetching cases...");
@@ -83,6 +85,7 @@ const Cases = () => {
         title: "Case deleted",
         description: "The case has been successfully deleted.",
       });
+      refetch();
     }
   };
 
@@ -121,7 +124,7 @@ const Cases = () => {
                   className="pl-8"
                 />
               </div>
-              <Button>
+              <Button onClick={() => setShowNewCaseDialog(true)}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Case
               </Button>
@@ -215,6 +218,12 @@ const Cases = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <NewCaseDialog 
+        open={showNewCaseDialog}
+        onOpenChange={setShowNewCaseDialog}
+        onSuccess={refetch}
+      />
     </div>
   );
 };
