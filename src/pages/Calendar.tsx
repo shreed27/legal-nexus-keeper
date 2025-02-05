@@ -35,11 +35,12 @@ const Calendar = () => {
           description: error.message,
           variant: "destructive",
         });
-        throw error;
+        return [];
       }
 
-      return data;
+      return data || [];
     },
+    enabled: !!date,
   });
 
   return (
