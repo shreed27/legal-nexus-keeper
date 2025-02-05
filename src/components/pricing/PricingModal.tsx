@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Check, X, Briefcase, Search, HardDrive, FileEdit, Users, Shield, Bot } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface PricingModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ interface PlanFeature {
 }
 
 const PricingModal = ({ isOpen, onClose, feature }: PricingModalProps) => {
+  const { toast } = useToast();
+  
   const features: PlanFeature[] = [
     {
       name: "Case Tracking & Reminders",
@@ -69,6 +72,30 @@ const PricingModal = ({ isOpen, onClose, feature }: PricingModalProps) => {
     },
   ];
 
+  const handlePlanSelection = (plan: string) => {
+    // For testing period, reset limits when selecting any plan
+    if (plan === 'basic') {
+      localStorage.setItem('searchCount', '0');
+      localStorage.setItem('storageUsed', '0');
+      localStorage.setItem('storedFiles', '[]');
+    } else if (plan === 'pro') {
+      localStorage.setItem('searchCount', '0');
+      localStorage.setItem('storageUsed', '0');
+      localStorage.setItem('storedFiles', '[]');
+    } else if (plan === 'premium') {
+      localStorage.setItem('searchCount', '0');
+      localStorage.setItem('storageUsed', '0');
+      localStorage.setItem('storedFiles', '[]');
+    }
+
+    toast({
+      title: "Plan Selected",
+      description: `You've selected the ${plan.charAt(0).toUpperCase() + plan.slice(1)} plan. Limits have been reset for testing.`,
+    });
+    
+    onClose();
+  };
+
   const renderValue = (value: string | boolean) => {
     if (typeof value === "boolean") {
       return value ? (
@@ -105,7 +132,7 @@ const PricingModal = ({ isOpen, onClose, feature }: PricingModalProps) => {
           </div>
 
           {/* Basic Plan */}
-          <div className="text-center">
+          <div className="text-center border rounded-lg p-4 hover:shadow-lg transition-shadow">
             <div className="h-20">
               <h3 className="text-xl font-bold">Basic</h3>
               <p className="text-2xl font-bold mt-2">₹2999</p>
@@ -115,11 +142,16 @@ const PricingModal = ({ isOpen, onClose, feature }: PricingModalProps) => {
                 {renderValue(feature.basic)}
               </div>
             ))}
-            <Button className="mt-4 w-full">Choose Basic</Button>
+            <Button 
+              className="mt-4 w-full"
+              onClick={() => handlePlanSelection('basic')}
+            >
+              Choose Basic
+            </Button>
           </div>
 
           {/* Pro Plan */}
-          <div className="text-center bg-primary/5 rounded-lg">
+          <div className="text-center bg-primary/5 border-2 border-primary rounded-lg p-4 hover:shadow-lg transition-shadow">
             <div className="h-20">
               <h3 className="text-xl font-bold">Pro</h3>
               <p className="text-2xl font-bold mt-2">₹5999</p>
@@ -129,11 +161,17 @@ const PricingModal = ({ isOpen, onClose, feature }: PricingModalProps) => {
                 {renderValue(feature.pro)}
               </div>
             ))}
-            <Button className="mt-4 w-full" variant="default">Choose Pro</Button>
+            <Button 
+              className="mt-4 w-full" 
+              variant="default"
+              onClick={() => handlePlanSelection('pro')}
+            >
+              Choose Pro
+            </Button>
           </div>
 
           {/* Premium Plan */}
-          <div className="text-center">
+          <div className="text-center border rounded-lg p-4 hover:shadow-lg transition-shadow">
             <div className="h-20">
               <h3 className="text-xl font-bold">Premium</h3>
               <p className="text-2xl font-bold mt-2">₹9999</p>
@@ -143,7 +181,12 @@ const PricingModal = ({ isOpen, onClose, feature }: PricingModalProps) => {
                 {renderValue(feature.premium)}
               </div>
             ))}
-            <Button className="mt-4 w-full">Choose Premium</Button>
+            <Button 
+              className="mt-4 w-full"
+              onClick={() => handlePlanSelection('premium')}
+            >
+              Choose Premium
+            </Button>
           </div>
         </div>
       </DialogContent>
