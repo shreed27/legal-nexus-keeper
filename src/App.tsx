@@ -8,6 +8,7 @@ import Dashboard from "./pages/Index";
 import Cases from "./pages/Cases";
 import Search from "./pages/Search";
 import Calendar from "./pages/Calendar";
+import Documents from "./pages/Documents";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/cases" element={<Cases />} />
           <Route path="/search" element={<Search />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/documents" element={<Documents />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

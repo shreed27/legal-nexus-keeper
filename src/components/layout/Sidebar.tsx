@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Calendar, FileText, Search, Layout, ChevronLeft, ChevronRight, FolderOpen } from 'lucide-react';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { icon: Layout, label: 'Dashboard', path: '/dashboard' },
@@ -21,7 +22,14 @@ const Sidebar = () => {
       }`}
     >
       <div className="flex h-20 items-center justify-between px-6">
-        {!collapsed && <span className="text-xl font-bold">AVENIX.PRO</span>}
+        {!collapsed && (
+          <span 
+            onClick={() => navigate('/')} 
+            className="text-xl font-bold cursor-pointer hover:text-primary transition-colors"
+          >
+            AVENIX.PRO
+          </span>
+        )}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="rounded-full p-2 hover:bg-neutral-800 transition-colors"
