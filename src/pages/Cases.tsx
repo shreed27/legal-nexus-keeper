@@ -40,28 +40,34 @@ const Cases = () => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [showPartyStats, setShowPartyStats] = useState(false);
 
-  const { data: cases, isLoading } = useQuery({
+  const { data: cases, isLoading, error } = useQuery({
     queryKey: ["cases"],
     queryFn: async () => {
       console.log("Fetching cases...");
-      const { data, error } = await supabase
-        .from("cases")
-        .select("*")
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("cases")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Supabase error:", error);
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
+
+        console.log("Cases fetched successfully:", data);
+        return data as Case[];
+      } catch (err) {
+        console.error("Error in query function:", err);
         toast({
           title: "Error fetching cases",
-          description: error.message,
+          description: err instanceof Error ? err.message : "An unknown error occurred",
           variant: "destructive",
         });
-        throw error;
+        throw err;
       }
-
-      console.log("Cases fetched:", data);
-      return data as Case[];
     },
+    retry: 1,
   });
 
   const handleDelete = async (id: string) => {
@@ -127,6 +133,10 @@ const Cases = () => {
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-24 bg-white rounded-lg animate-pulse" />
               ))}
+            </div>
+          ) : error ? (
+            <div className="bg-destructive/10 p-4 rounded-lg">
+              <p className="text-destructive">Failed to load cases. Please try again later.</p>
             </div>
           ) : (
             <div className="bg-white rounded-lg shadow">
