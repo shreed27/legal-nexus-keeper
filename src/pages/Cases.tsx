@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "../lib/supabase";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
@@ -41,55 +39,21 @@ const Cases = () => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [showPartyStats, setShowPartyStats] = useState(false);
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
+  const [cases, setCases] = useState<Case[]>([]);
 
-  const { data: cases, isLoading, error, refetch } = useQuery({
-    queryKey: ["cases"],
-    queryFn: async () => {
-      console.log("Fetching cases...");
-      try {
-        const { data, error } = await supabase
-          .from("cases")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          console.error("Supabase error:", error);
-          throw error;
-        }
-
-        console.log("Cases fetched successfully:", data);
-        return data as Case[];
-      } catch (err) {
-        console.error("Error in query function:", err);
-        toast({
-          title: "Error fetching cases",
-          description: err instanceof Error ? err.message : "An unknown error occurred",
-          variant: "destructive",
-        });
-        throw err;
-      }
-    },
-    retry: 1,
-  });
-
-  const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("cases").delete().eq("id", id);
-    if (error) {
-      toast({
-        title: "Error deleting case",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Case deleted",
-        description: "The case has been successfully deleted.",
-      });
-      refetch();
-    }
+  const handleDelete = (id: string) => {
+    setCases(cases.filter(case_ => case_.id !== id));
+    toast({
+      title: "Case deleted",
+      description: "The case has been successfully deleted.",
+    });
   };
 
-  const filteredCases = cases?.filter(
+  const handleAddCase = (newCase: Case) => {
+    setCases([newCase, ...cases]);
+  };
+
+  const filteredCases = cases.filter(
     (case_) =>
       case_.party_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       case_.case_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -97,11 +61,11 @@ const Cases = () => {
   );
 
   const getPartyStats = (partyName: string) => {
-    const partyCases = cases?.filter((case_) => case_.party_name === partyName);
+    const partyCases = cases.filter((case_) => case_.party_name === partyName);
     return {
-      totalCases: partyCases?.length || 0,
-      totalAmount: partyCases?.reduce((sum, case_) => sum + case_.amount_charged, 0) || 0,
-      totalHearings: partyCases?.reduce((sum, case_) => sum + case_.hearings_count, 0) || 0,
+      totalCases: partyCases.length,
+      totalAmount: partyCases.reduce((sum, case_) => sum + case_.amount_charged, 0),
+      totalHearings: partyCases.reduce((sum, case_) => sum + case_.hearings_count, 0),
     };
   };
 
@@ -131,64 +95,52 @@ const Cases = () => {
             </div>
           </div>
 
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-24 bg-white rounded-lg animate-pulse" />
-              ))}
-            </div>
-          ) : error ? (
-            <div className="bg-destructive/10 p-4 rounded-lg">
-              <p className="text-destructive">Failed to load cases. Please try again later.</p>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Party Name</TableHead>
-                    <TableHead>Court</TableHead>
-                    <TableHead>Case No.</TableHead>
-                    <TableHead>Previous Date</TableHead>
-                    <TableHead>Next Date</TableHead>
-                    <TableHead>Stage</TableHead>
-                    <TableHead>Actions</TableHead>
+          <div className="bg-white rounded-lg shadow">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Party Name</TableHead>
+                  <TableHead>Court</TableHead>
+                  <TableHead>Case No.</TableHead>
+                  <TableHead>Previous Date</TableHead>
+                  <TableHead>Next Date</TableHead>
+                  <TableHead>Stage</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCases.map((case_) => (
+                  <TableRow key={case_.id}>
+                    <TableCell>
+                      <button
+                        onClick={() => {
+                          setSelectedParty(case_.party_name);
+                          setShowPartyStats(true);
+                        }}
+                        className="text-primary hover:underline"
+                      >
+                        {case_.party_name}
+                      </button>
+                    </TableCell>
+                    <TableCell>{case_.court_name}</TableCell>
+                    <TableCell>{case_.case_number}</TableCell>
+                    <TableCell>{case_.previous_date}</TableCell>
+                    <TableCell>{case_.next_date}</TableCell>
+                    <TableCell>{case_.stage}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(case_.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCases?.map((case_) => (
-                    <TableRow key={case_.id}>
-                      <TableCell>
-                        <button
-                          onClick={() => {
-                            setSelectedParty(case_.party_name);
-                            setShowPartyStats(true);
-                          }}
-                          className="text-primary hover:underline"
-                        >
-                          {case_.party_name}
-                        </button>
-                      </TableCell>
-                      <TableCell>{case_.court_name}</TableCell>
-                      <TableCell>{case_.case_number}</TableCell>
-                      <TableCell>{case_.previous_date}</TableCell>
-                      <TableCell>{case_.next_date}</TableCell>
-                      <TableCell>{case_.stage}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(case_.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </main>
 
@@ -222,7 +174,7 @@ const Cases = () => {
       <NewCaseDialog 
         open={showNewCaseDialog}
         onOpenChange={setShowNewCaseDialog}
-        onSuccess={refetch}
+        onSuccess={handleAddCase}
       />
     </div>
   );

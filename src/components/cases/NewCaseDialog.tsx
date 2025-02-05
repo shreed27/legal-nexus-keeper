@@ -18,7 +18,6 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { supabase } from "@/lib/supabase";
 
 const newCaseSchema = z.object({
   party_name: z.string().min(1, "Party name is required"),
@@ -35,7 +34,7 @@ type NewCaseForm = z.infer<typeof newCaseSchema>;
 interface NewCaseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onSuccess: (newCase: any) => void;
 }
 
 export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogProps) {
@@ -53,26 +52,22 @@ export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogPr
     },
   });
 
-  const onSubmit = async (data: NewCaseForm) => {
+  const onSubmit = (data: NewCaseForm) => {
     try {
-      const { error } = await supabase.from("cases").insert([
-        {
-          ...data,
-          amount_charged: parseFloat(data.amount_charged),
-          hearings_count: 1, // Initial hearing count
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      const newCase = {
+        id: Date.now().toString(), // Generate a unique ID
+        ...data,
+        amount_charged: parseFloat(data.amount_charged),
+        hearings_count: 1,
+      };
 
-      if (error) throw error;
-
+      onSuccess(newCase);
       toast({
         title: "Success",
         description: "New case has been added successfully",
       });
       
       form.reset();
-      onSuccess();
       onOpenChange(false);
     } catch (error) {
       console.error("Error adding new case:", error);
