@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -35,9 +36,9 @@ export default {
           dark: "#1A1F2C",
         },
         accent: {
-          DEFAULT: "#6E59A5",
-          light: "#8B7AB8",
-          dark: "#4D3B82",
+          DEFAULT: "#e879f9",
+          light: "#f0abfc",
+          dark: "#d946ef",
         },
       },
       borderRadius: {
@@ -62,12 +63,17 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0)" },
         },
+        glow: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
         "slide-in": "slide-in 0.5s ease-out",
+        glow: "glow 2s ease-in-out infinite",
       },
     },
   },
