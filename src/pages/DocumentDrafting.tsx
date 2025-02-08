@@ -7,7 +7,7 @@ import DocumentGenerator from "@/components/document-drafting/DocumentGenerator"
 import TemplateGallery from "@/components/document-drafting/TemplateGallery";
 import RecentDocuments from "@/components/document-drafting/RecentDocuments";
 import { useState } from "react";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import { useIsMobile } from "../hooks/use-mobile";
 
 const DocumentDrafting = () => {
   const [activeTab, setActiveTab] = useState("generate");
