@@ -15,19 +15,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
     >
       <div className="flex items-start max-w-[85%] md:max-w-[80%] gap-3">
         {message.sender === 'bot' ? (
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center flex-shrink-0 border border-white/10">
             <Bot className="h-5 w-5 text-primary" />
           </div>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-white/10 to-primary/10 flex items-center justify-center flex-shrink-0 border border-white/10">
             <User className="h-5 w-5 text-white/80" />
           </div>
         )}
         <div
           className={`rounded-lg p-3 md:p-4 ${
             message.sender === 'user'
-              ? 'bg-primary text-white'
-              : 'bg-[#282c34] text-white/90'
+              ? 'bg-gradient-to-br from-primary to-accent text-white'
+              : 'bg-gradient-to-br from-white/10 to-primary/5 text-white/90 border border-white/10'
           }`}
         >
           <div className="prose prose-invert max-w-none">
