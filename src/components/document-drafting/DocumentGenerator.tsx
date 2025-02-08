@@ -21,9 +21,28 @@ const DocumentGenerator = () => {
       description: "Our AI is crafting your document...",
     });
     
-    // Simulate AI generation
+    // Simulate AI generation - in a real app, this would call an API
     setTimeout(() => {
-      const demoContent = `AGREEMENT made this ${new Date().toLocaleDateString()}\n\nThis agreement ("Agreement") is entered into between Party A and Party B...\n\nTerms and Conditions:\n1. Services\n2. Payment\n3. Term`;
+      let demoContent = prompt;
+      
+      // If no custom prompt is provided, generate a sample document
+      if (!prompt.trim()) {
+        demoContent = `AGREEMENT made this ${new Date().toLocaleDateString()}\n\n`;
+        demoContent += `This ${documentType.toLowerCase()} ("Agreement") is entered into between [PARTY A] and [PARTY B]...\n\n`;
+        demoContent += `WHEREAS, the parties wish to enter into this Agreement for the purpose of [PURPOSE];\n\n`;
+        demoContent += `NOW, THEREFORE, in consideration of the mutual covenants contained herein, the parties agree as follows:\n\n`;
+        demoContent += `1. Definitions\n`;
+        demoContent += `2. Term and Termination\n`;
+        demoContent += `3. Rights and Obligations\n`;
+        demoContent += `4. Compensation\n`;
+        demoContent += `5. Confidentiality\n`;
+        demoContent += `6. Governing Law\n`;
+        demoContent += `7. Entire Agreement\n\n`;
+        demoContent += `IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first above written.\n\n`;
+        demoContent += `[PARTY A]\n___________________\n\n`;
+        demoContent += `[PARTY B]\n___________________`;
+      }
+      
       setGeneratedContent(demoContent);
       
       toast({
@@ -49,6 +68,9 @@ const DocumentGenerator = () => {
                 <SelectItem value="motion">Court Motion</SelectItem>
                 <SelectItem value="brief">Legal Brief</SelectItem>
                 <SelectItem value="memo">Legal Memorandum</SelectItem>
+                <SelectItem value="pleading">Legal Pleading</SelectItem>
+                <SelectItem value="affidavit">Affidavit</SelectItem>
+                <SelectItem value="settlement">Settlement Agreement</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -64,15 +86,17 @@ const DocumentGenerator = () => {
                 <SelectItem value="formal">Highly Formal</SelectItem>
                 <SelectItem value="simplified">Plain Language</SelectItem>
                 <SelectItem value="assertive">Assertive</SelectItem>
+                <SelectItem value="conciliatory">Conciliatory</SelectItem>
+                <SelectItem value="technical">Technical</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         <div className="space-y-4">
-          <Label>Document Requirements</Label>
+          <Label>Document Requirements or Template Content</Label>
           <Textarea
-            placeholder="Describe your document requirements (e.g., 'Draft a service agreement between a software company and a client for a 12-month contract...')"
+            placeholder="Enter your document requirements or paste template content here..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="min-h-[200px]"
@@ -83,7 +107,6 @@ const DocumentGenerator = () => {
       <Button 
         className="w-full"
         onClick={handleDraft}
-        disabled={!prompt.trim()}
       >
         <FileText className="w-4 h-4 mr-2" />
         Generate Document
