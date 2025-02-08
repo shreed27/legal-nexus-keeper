@@ -10,11 +10,11 @@ const FeatureCard = ({ feature }: FeatureCardProps) => {
   const Icon = feature.icon;
   
   return (
-    <Card className="glass-card hover-scale">
+    <Card className="bg-[#282c34]/80 border-white/10 hover:scale-105 transition-transform duration-200">
       <CardHeader>
         <Icon className="h-8 w-8 text-primary mb-2" />
-        <CardTitle>{feature.title}</CardTitle>
-        <CardDescription>{feature.description}</CardDescription>
+        <CardTitle className="text-white">{feature.title}</CardTitle>
+        <CardDescription className="text-neutral-400">{feature.description}</CardDescription>
       </CardHeader>
     </Card>
   );
