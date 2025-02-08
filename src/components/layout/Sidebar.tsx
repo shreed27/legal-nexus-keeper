@@ -31,22 +31,22 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed left-0 top-0 h-full bg-neutral-dark text-white transition-all duration-300 ${
+      className={`fixed left-0 top-0 h-full bg-white border-r border-neutral-200/50 text-neutral-600 transition-all duration-300 ${
         collapsed ? 'w-20' : 'w-64'
-      }`}
+      } z-50`}
     >
-      <div className="flex h-20 items-center justify-between px-6">
+      <div className="flex h-20 items-center justify-between px-6 border-b border-neutral-200/50">
         {!collapsed && (
           <span 
             onClick={() => navigate('/')} 
-            className="text-xl font-bold cursor-pointer hover:text-primary transition-colors"
+            className="text-xl font-bold cursor-pointer gradient-text hover:opacity-80 transition-opacity"
           >
             AVENIX.PRO
           </span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="rounded-full p-2 hover:bg-neutral-800 transition-colors"
+          className="rounded-full p-2 hover:bg-neutral-100 transition-colors"
         >
           {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -57,11 +57,11 @@ const Sidebar = () => {
           <Link
             key={item.path}
             to={item.path}
-            className={`flex items-center px-6 py-4 transition-colors hover:bg-neutral-800 ${
-              location.pathname === item.path ? 'bg-primary/20 border-r-4 border-primary' : ''
+            className={`flex items-center px-6 py-4 transition-colors hover:bg-neutral-100 ${
+              location.pathname === item.path ? 'bg-primary/10 border-r-4 border-primary' : ''
             }`}
           >
-            <item.icon size={24} />
+            <item.icon size={24} className={location.pathname === item.path ? 'text-primary' : ''} />
             {!collapsed && <span className="ml-4">{item.label}</span>}
           </Link>
         ))}

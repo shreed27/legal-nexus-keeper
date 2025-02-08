@@ -5,12 +5,12 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
     --primary: 262 84% 75%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217 76% 85%;
@@ -30,15 +30,15 @@
 
 @layer base {
   * {
-    @apply border-border selection:bg-primary/20 selection:text-white;
+    @apply border-border selection:bg-primary/20;
   }
   body {
-    @apply bg-gradient-to-br from-[#1a1d21] via-[#1f1a2e] to-[#1a1d21] text-foreground antialiased min-h-screen;
+    @apply bg-gradient-to-br from-white via-[#f8f9ff] to-white text-neutral-800 antialiased min-h-screen;
   }
 }
 
 .glass-card {
-  @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl hover:bg-white/15 transition-colors duration-300;
+  @apply bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl hover:bg-white/90 transition-colors duration-300;
 }
 
 .hover-scale {
@@ -50,7 +50,7 @@
 }
 
 .gradient-text {
-  @apply bg-gradient-to-r from-white via-primary-light to-accent bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-primary via-accent to-primary-light bg-clip-text text-transparent;
 }
 
 .glow {
@@ -66,7 +66,7 @@
 }
 
 .gradient-bg {
-  @apply bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10;
+  @apply bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5;
 }
 
 .neon-glow {
