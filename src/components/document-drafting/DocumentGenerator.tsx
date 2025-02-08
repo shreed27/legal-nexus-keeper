@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import DocumentPreview from "./DocumentPreview";
 import { useToast } from "@/hooks/use-toast";
 
 const DocumentGenerator = () => {
@@ -44,16 +43,31 @@ const DocumentGenerator = () => {
       }
       
       setGeneratedContent(demoContent);
+
+      // Save the generated document
+      const newDocument = {
+        id: crypto.randomUUID(),
+        title: `${documentType.charAt(0).toUpperCase() + documentType.slice(1)} - Draft`,
+        content: demoContent,
+        timestamp: new Date().toISOString(),
+        type: documentType,
+      };
+
+      const existingDocs = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
+      localStorage.setItem('generatedDocuments', JSON.stringify([newDocument, ...existingDocs]));
+      
+      // Trigger storage event for RecentDocuments to update
+      window.dispatchEvent(new Event('storage'));
       
       toast({
         title: "Document Generated Successfully",
-        description: "Your document is ready for review and editing.",
+        description: "Your document has been saved and is ready for use.",
       });
     }, 2000);
   };
 
   return (
-    <div className="space-y-6">
+    <div id="document-generator" className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div className="space-y-2">
@@ -112,7 +126,13 @@ const DocumentGenerator = () => {
         Generate Document
       </Button>
 
-      {generatedContent && <DocumentPreview content={generatedContent} />}
+      {generatedContent && (
+        <div className="mt-6 space-y-4">
+          <div className="bg-neutral-50 p-4 rounded-lg min-h-[400px] whitespace-pre-wrap font-mono">
+            {generatedContent}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
