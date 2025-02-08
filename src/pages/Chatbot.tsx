@@ -115,13 +115,13 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1d21] via-[#1f1a2e] to-[#1a1d21] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-white text-neutral-700">
       {isMobile && (
         <button
           onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-50 p-2 bg-primary/10 rounded-lg backdrop-blur-xl"
+          className="fixed top-4 left-4 z-50 p-2 glass-card rounded-lg"
         >
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6 text-neutral-600" />
         </button>
       )}
       

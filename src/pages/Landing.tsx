@@ -1,12 +1,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ArrowRight, Check } from "lucide-react";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5">
-      <nav className="fixed w-full bg-white/80 backdrop-blur-xl border-b border-neutral-200/50 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-white">
+      <nav className="fixed w-full glass-morphism z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <span className="text-2xl font-bold gradient-text">AVENIX.PRO</span>
@@ -20,44 +20,88 @@ const Landing = () => {
       <main className="pt-16">
         <section className="py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-in gradient-text">
+            <div className="mb-8 flex justify-center">
+              <span className="glass-card px-4 py-2 rounded-full text-sm text-primary animate-fade-in">
+                Revolutionizing Legal Practice
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in gradient-text leading-tight">
               Your Legal Practice,{" "}
-              <span className="text-primary">Simplified</span>
+              <span className="text-primary">Reimagined</span>
             </h1>
             <p className="text-lg md:text-xl text-neutral-600 mb-8 max-w-2xl mx-auto animate-fade-in">
-              Streamline your legal practice with our comprehensive case management
-              system. Track cases, set reminders, and leverage AI-powered legal
-              research.
+              Experience the future of legal practice management with AI-powered tools
+              and seamless workflow automation.
             </p>
-            <Button size="lg" asChild className="animate-fade-in glass-card neon-glow">
-              <Link to="/dashboard" className="flex items-center gap-2">
-                Get Started <Sparkles className="w-4 h-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
+              <Button size="lg" asChild className="glass-card neon-glow w-full sm:w-auto">
+                <Link to="/dashboard" className="flex items-center gap-2">
+                  Get Started <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="glass-card w-full sm:w-auto">
+                <Link to="/chatbot">Try AI Assistant</Link>
+              </Button>
+            </div>
           </div>
         </section>
 
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Key Features</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text">
+              Next-Generation Legal Tools
+            </h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="p-6 rounded-xl glass-card hover-scale">
-                <h3 className="text-xl font-semibold mb-4 gradient-text">Case Tracking</h3>
+              <div className="glass-card p-6 rounded-xl hover-scale">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
+                  <Brain className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4 gradient-text">AI-Powered Research</h3>
                 <p className="text-neutral-600">
-                  Efficiently manage and track all your legal cases in one place.
+                  Leverage advanced AI to streamline your legal research and documentation.
                 </p>
+                <ul className="mt-4 space-y-2">
+                  {["Smart Search", "Precedent Analysis", "Citation Checker"].map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-neutral-600">
+                      <Check className="h-4 w-4 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="p-6 rounded-xl glass-card hover-scale">
-                <h3 className="text-xl font-semibold mb-4 gradient-text">AI Legal Search</h3>
+              <div className="glass-card p-6 rounded-xl hover-scale">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4 gradient-text">Workflow Automation</h3>
                 <p className="text-neutral-600">
-                  Powerful AI-powered legal research with 3 searches per month.
+                  Automate repetitive tasks and focus on what matters most - your clients.
                 </p>
+                <ul className="mt-4 space-y-2">
+                  {["Document Generation", "Task Automation", "Calendar Integration"].map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-neutral-600">
+                      <Check className="h-4 w-4 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="p-6 rounded-xl glass-card hover-scale">
-                <h3 className="text-xl font-semibold mb-4 gradient-text">Document Storage</h3>
+              <div className="glass-card p-6 rounded-xl hover-scale">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
+                  <MessageCircle className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4 gradient-text">Client Portal</h3>
                 <p className="text-neutral-600">
-                  Secure document storage with up to 5GB of space.
+                  Provide a seamless experience for your clients with our modern portal.
                 </p>
+                <ul className="mt-4 space-y-2">
+                  {["Secure Messaging", "File Sharing", "Progress Tracking"].map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-neutral-600">
+                      <Check className="h-4 w-4 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
