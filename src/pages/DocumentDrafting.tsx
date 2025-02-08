@@ -1,85 +1,13 @@
-
-import { useState } from "react";
-import { FileText, PenTool, SpellCheck, TextQuote, LayoutTemplate, Rocket, Award, Brain, Download, Edit, Eye, Save, Share2 } from "lucide-react";
+import { Brain, PenTool, SpellCheck, LayoutTemplate, Rocket } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FeatureCard from "@/components/document-drafting/FeatureCard";
+import DocumentGenerator from "@/components/document-drafting/DocumentGenerator";
+import TemplateGallery from "@/components/document-drafting/TemplateGallery";
+import RecentDocuments from "@/components/document-drafting/RecentDocuments";
 
 const DocumentDrafting = () => {
-  const [prompt, setPrompt] = useState("");
-  const [documentType, setDocumentType] = useState("contract");
-  const [tone, setTone] = useState("professional");
-  const [generatedContent, setGeneratedContent] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const { toast } = useToast();
-
-  const handleDraft = () => {
-    toast({
-      title: "Starting Document Generation",
-      description: "Our AI is crafting your document...",
-    });
-    
-    // Simulate AI generation
-    setTimeout(() => {
-      const demoContent = `AGREEMENT made this ${new Date().toLocaleDateString()}\n\nThis agreement ("Agreement") is entered into between Party A and Party B...\n\nTerms and Conditions:\n1. Services\n2. Payment\n3. Term`;
-      setGeneratedContent(demoContent);
-      
-      toast({
-        title: "Document Generated Successfully",
-        description: "Your document is ready for review and editing.",
-      });
-    }, 2000);
-  };
-
-  const handleDownload = () => {
-    const element = document.createElement("a");
-    const file = new Blob([generatedContent], {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = `${documentType}-${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-
-    toast({
-      title: "Document Downloaded",
-      description: "Your document has been downloaded successfully.",
-    });
-  };
-
-  const handleSave = () => {
-    toast({
-      title: "Document Saved",
-      description: "Your changes have been saved successfully.",
-    });
-    setIsEditing(false);
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Legal Document',
-        text: generatedContent,
-      }).then(() => {
-        toast({
-          title: "Document Shared",
-          description: "Your document has been shared successfully.",
-        });
-      }).catch(console.error);
-    } else {
-      toast({
-        title: "Share Not Available",
-        description: "Sharing is not supported on this device.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const features = [
     {
       icon: Brain,
@@ -122,13 +50,12 @@ const DocumentDrafting = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {features.map((feature, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow animate-fade-in">
-                <CardHeader>
-                  <feature.icon className="h-8 w-8 text-primary mb-2" />
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
+              <FeatureCard 
+                key={index}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+              />
             ))}
           </div>
 
@@ -139,159 +66,20 @@ const DocumentDrafting = () => {
                 <TabsTrigger value="templates">Templates</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="generate" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Document Type</Label>
-                      <Select value={documentType} onValueChange={setDocumentType}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select document type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="contract">Contract Agreement</SelectItem>
-                          <SelectItem value="letter">Legal Letter</SelectItem>
-                          <SelectItem value="motion">Court Motion</SelectItem>
-                          <SelectItem value="brief">Legal Brief</SelectItem>
-                          <SelectItem value="memo">Legal Memorandum</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Tone & Style</Label>
-                      <Select value={tone} onValueChange={setTone}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select tone" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="professional">Professional</SelectItem>
-                          <SelectItem value="formal">Highly Formal</SelectItem>
-                          <SelectItem value="simplified">Plain Language</SelectItem>
-                          <SelectItem value="assertive">Assertive</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label>Document Requirements</Label>
-                    <Textarea
-                      placeholder="Describe your document requirements (e.g., 'Draft a service agreement between a software company and a client for a 12-month contract...')"
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      className="min-h-[200px]"
-                    />
-                  </div>
-                </div>
-                
-                <Button 
-                  className="w-full"
-                  onClick={handleDraft}
-                  disabled={!prompt.trim()}
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Generate Document
-                </Button>
-
-                {generatedContent && (
-                  <div className="mt-6 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-medium">Generated Document</h3>
-                      <div className="flex gap-2">
-                        <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
-                          {isEditing ? <Eye className="w-4 h-4 mr-2" /> : <Edit className="w-4 h-4 mr-2" />}
-                          {isEditing ? "Preview" : "Edit"}
-                        </Button>
-                        {isEditing && (
-                          <Button variant="outline" onClick={handleSave}>
-                            <Save className="w-4 h-4 mr-2" />
-                            Save
-                          </Button>
-                        )}
-                        <Button variant="outline" onClick={handleDownload}>
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </Button>
-                        <Button variant="outline" onClick={handleShare}>
-                          <Share2 className="w-4 h-4 mr-2" />
-                          Share
-                        </Button>
-                      </div>
-                    </div>
-                    {isEditing ? (
-                      <Textarea
-                        value={generatedContent}
-                        onChange={(e) => setGeneratedContent(e.target.value)}
-                        className="min-h-[400px] font-mono"
-                      />
-                    ) : (
-                      <div className="bg-neutral-50 p-4 rounded-lg min-h-[400px] whitespace-pre-wrap font-mono">
-                        {generatedContent}
-                      </div>
-                    )}
-                  </div>
-                )}
+              <TabsContent value="generate">
+                <DocumentGenerator />
               </TabsContent>
 
-              <TabsContent value="templates" className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { title: "Service Agreement", description: "Standard service contract template" },
-                  { title: "NDA", description: "Non-disclosure agreement template" },
-                  { title: "Employment Contract", description: "Standard employment agreement" },
-                  { title: "Terms of Service", description: "Website terms of service template" },
-                  { title: "Privacy Policy", description: "Standard privacy policy template" },
-                  { title: "Cease & Desist", description: "Legal notice template" }
-                ].map((template, index) => (
-                  <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{template.title}</CardTitle>
-                      <CardDescription>{template.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button variant="outline" className="w-full" onClick={() => {
-                        setDocumentType(template.title.toLowerCase());
-                        setPrompt(`Generate a ${template.title} document`);
-                        toast({
-                          title: "Template Selected",
-                          description: `${template.title} template has been loaded.`,
-                        });
-                      }}>
-                        <FileText className="w-4 h-4 mr-2" />
-                        Use Template
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+              <TabsContent value="templates">
+                <TemplateGallery 
+                  onSelectTemplate={(title, prompt) => {
+                    // Handle template selection if needed
+                  }} 
+                />
               </TabsContent>
             </Tabs>
 
-            <div className="mt-8 pt-8 border-t">
-              <div className="flex items-center gap-2 mb-4">
-                <Award className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-medium">Recent Documents</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { title: "Service Agreement - Draft", date: "2 hours ago" },
-                  { title: "Employment Contract", date: "Yesterday" },
-                ].map((doc, index) => (
-                  <Card key={index} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-base">{doc.title}</CardTitle>
-                          <CardDescription>{doc.date}</CardDescription>
-                        </div>
-                        <Button variant="ghost" size="icon">
-                          <FileText className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardHeader>
-                  </Card>
-                ))}
-              </div>
-            </div>
+            <RecentDocuments />
           </div>
         </div>
       </main>
@@ -300,4 +88,3 @@ const DocumentDrafting = () => {
 };
 
 export default DocumentDrafting;
-
