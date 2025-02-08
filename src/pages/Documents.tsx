@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PricingModal from "@/components/pricing/PricingModal";
+import { useIsMobile } from "../hooks/use-mobile";
 
 interface StoredFile {
   id: string;
@@ -21,6 +22,7 @@ const Documents = () => {
   const [files, setFiles] = useState<StoredFile[]>([]);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const storedFiles = localStorage.getItem('storedFiles');
@@ -110,7 +112,7 @@ const Documents = () => {
       <Sidebar />
       <Header />
       
-      <main className="ml-64 pt-20 p-8">
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-neutral-dark">Document Storage</h1>

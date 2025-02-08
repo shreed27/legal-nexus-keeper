@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Shield, CheckCircle, AlertTriangle, FileCheck, Scale, Book, ChevronRight } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
@@ -9,11 +8,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "../hooks/use-mobile";
 
 const ComplianceChecker = () => {
   const [text, setText] = useState("");
   const [progress, setProgress] = useState(0);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const features = [
     {
@@ -58,11 +59,11 @@ const ComplianceChecker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-light">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-white">
       <Sidebar />
       <Header />
       
-      <main className="ml-64 pt-20 p-8">
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-primary/10 rounded-xl">
