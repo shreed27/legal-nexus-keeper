@@ -31,6 +31,7 @@
 @layer base {
   * {
     @apply border-border selection:bg-primary/20;
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-gradient-to-br from-white via-blue-50 to-white text-neutral-700 antialiased min-h-screen;
@@ -46,7 +47,8 @@
 }
 
 .fade-in {
-  @apply animate-fade-in;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .gradient-text {
@@ -73,4 +75,23 @@
   @apply relative;
   box-shadow: 0 0 20px theme('colors.primary.DEFAULT'),
               0 0 40px theme('colors.accent.DEFAULT');
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.glass-morphism {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
+}
+
+.smooth-transition {
+  @apply transition-all duration-300 ease-in-out;
 }
