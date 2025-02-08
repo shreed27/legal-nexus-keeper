@@ -6,7 +6,7 @@ import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Message, Feature, Document } from "@/types/chat";
+import { Message, Feature, UploadedDocument } from "@/types/chat";
 import { generateResponse } from "@/utils/chatUtils";
 import FeatureCard from "@/components/chat/FeatureCard";
 import WelcomeMessage from "@/components/chat/WelcomeMessage";
@@ -15,7 +15,7 @@ import ChatMessage from "@/components/chat/ChatMessage";
 const Chatbot = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const { toast } = useToast();
 
   const features: Feature[] = [
@@ -49,7 +49,7 @@ const Chatbot = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result as string;
-        const newDocument: Document = {
+        const newDocument: UploadedDocument = {
           id: crypto.randomUUID(),
           name: file.name,
           content: content,

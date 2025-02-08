@@ -13,7 +13,8 @@ export interface Feature {
   description: string;
 }
 
-export interface Document {
+// Renamed from Document to UploadedDocument to avoid collision with DOM Document type
+export interface UploadedDocument {
   id: string;
   name: string;
   content: string;

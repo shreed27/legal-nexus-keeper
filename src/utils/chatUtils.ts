@@ -1,5 +1,7 @@
 
-export const generateResponse = (userMessage: string, documents: Document[] = []): string => {
+import { UploadedDocument } from '@/types/chat';
+
+export const generateResponse = (userMessage: string, documents: UploadedDocument[] = []): string => {
   // Check for document-related queries
   if (userMessage.toLowerCase().includes('document') || 
       userMessage.toLowerCase().includes('file') ||
