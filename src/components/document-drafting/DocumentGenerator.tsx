@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -67,8 +67,8 @@ const DocumentGenerator = () => {
     }, 2000);
   };
 
-  // Update prompt when called from TemplateGallery
-  useState(() => {
+  // Check for template content in URL params on component mount
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const templateContent = urlParams.get('template');
     if (templateContent) {
