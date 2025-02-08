@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,8 +9,10 @@ import Dashboard from "./pages/Index";
 import Cases from "./pages/Cases";
 import CaseDetails from "./pages/CaseDetails";
 import Search from "./pages/Search";
-import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
+import DocumentDrafting from "./pages/DocumentDrafting";
+import ComplianceChecker from "./pages/ComplianceChecker";
+import Chatbot from "./pages/Chatbot";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,8 +29,10 @@ const App = () => (
           <Route path="/cases" element={<Cases />} />
           <Route path="/cases/:id" element={<CaseDetails />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/calendar" element={<Calendar />} />
           <Route path="/documents" element={<Documents />} />
+          <Route path="/document-drafting" element={<DocumentDrafting />} />
+          <Route path="/compliance" element={<ComplianceChecker />} />
+          <Route path="/chatbot" element={<Chatbot />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
