@@ -3,18 +3,14 @@ import { Bot } from "lucide-react";
 
 const WelcomeMessage = () => {
   return (
-    <div className="text-center space-y-8 p-8">
-      <div className="glow mx-auto w-fit">
-        <Bot className="w-16 h-16 text-primary relative z-10 animate-pulse" />
+    <div className="flex flex-col items-center justify-center space-y-6 p-12">
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-2xl opacity-75" />
+        <Bot className="w-20 h-20 text-primary relative z-10 animate-pulse duration-3000" />
       </div>
-      <h2 className="text-3xl font-bold gradient-text">
+      <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-primary-light to-accent bg-clip-text text-transparent text-center">
         AI Legal Assistant
       </h2>
-      <div className="glass-card max-w-2xl mx-auto p-8">
-        <p className="text-primary-light text-lg font-medium">
-          Start your conversation
-        </p>
-      </div>
     </div>
   );
 };
