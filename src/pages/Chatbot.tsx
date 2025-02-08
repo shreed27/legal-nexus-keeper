@@ -1,26 +1,23 @@
 
 import { useState } from "react";
-import { Bot, Send, Brain, Zap, MessageCircle, LayoutDashboard, User } from "lucide-react";
+import { Bot, Send, Brain, Zap, MessageCircle, LayoutDashboard } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
+import { Message, Feature } from "@/types/chat";
+import { generateResponse } from "@/utils/chatUtils";
+import FeatureCard from "@/components/chat/FeatureCard";
+import WelcomeMessage from "@/components/chat/WelcomeMessage";
+import ChatMessage from "@/components/chat/ChatMessage";
 
 const Chatbot = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const { toast } = useToast();
 
-  const features = [
+  const features: Feature[] = [
     {
       icon: Brain,
       title: "Legal AI Brain",
@@ -43,25 +40,6 @@ const Chatbot = () => {
     }
   ];
 
-  const generateResponse = (userMessage: string) => {
-    if (userMessage.toLowerCase().includes('hello') || userMessage.toLowerCase().includes('hi')) {
-      return "Hello! I'm your AVENIX.PRO Legal Assistant. How can I help you with your legal questions today?";
-    }
-    
-    // Check if the message is about legal topics
-    if (!userMessage.toLowerCase().includes('law') && 
-        !userMessage.toLowerCase().includes('legal') && 
-        !userMessage.toLowerCase().includes('court') && 
-        !userMessage.toLowerCase().includes('rights') &&
-        !userMessage.toLowerCase().includes('contract') &&
-        !userMessage.toLowerCase().includes('case')) {
-      return "I'm your AVENIX.PRO Legal Assistant. I specialize in legal matters. Could you please rephrase your question in a legal context?";
-    }
-    
-    // Default legal response
-    return "Based on your legal question, here's my analysis: [Legal response would be generated here]. Please note that this is general legal information and not legal advice. For specific legal advice, please consult with a qualified attorney.";
-  };
-
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
@@ -76,7 +54,6 @@ const Chatbot = () => {
     setMessages(prev => [...prev, newMessage]);
     setMessage("");
     
-    // Generate bot response
     setTimeout(() => {
       const botResponse: Message = {
         id: crypto.randomUUID(),
@@ -112,63 +89,17 @@ const Chatbot = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {features.map((feature, index) => (
-              <Card key={index} className="glass-card hover-scale">
-                <CardHeader>
-                  <feature.icon className="h-8 w-8 text-primary mb-2" />
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
+              <FeatureCard key={index} feature={feature} />
             ))}
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg flex flex-col h-[600px] border border-neutral-200">
             <div className="p-6 flex-1 overflow-y-auto space-y-4">
               {messages.length === 0 ? (
-                <div className="text-center text-neutral-600 mt-8 space-y-4">
-                  <Bot className="w-16 h-16 mx-auto mb-4 text-primary animate-pulse" />
-                  <h2 className="text-2xl font-semibold mb-2">Welcome to AVENIX.PRO Legal Assistant</h2>
-                  <p className="text-lg max-w-2xl mx-auto">
-                    I'm here to help you with legal questions and provide information based on legal regulations and case law. 
-                    While I can offer general legal information, please note that my responses should not be considered as 
-                    legal advice. For specific legal advice, always consult with a qualified attorney.
-                  </p>
-                  <p className="text-neutral-500">Ask any legal question to get started</p>
-                </div>
+                <WelcomeMessage />
               ) : (
                 messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex ${
-                      msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                    } fade-in`}
-                  >
-                    <div className="flex items-start max-w-[80%] gap-3">
-                      {msg.sender === 'bot' ? (
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Bot className="h-5 w-5 text-primary" />
-                        </div>
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center flex-shrink-0">
-                          <User className="h-5 w-5 text-neutral-600" />
-                        </div>
-                      )}
-                      <div
-                        className={`rounded-lg p-4 ${
-                          msg.sender === 'user'
-                            ? 'bg-primary text-white'
-                            : 'bg-neutral-100'
-                        }`}
-                      >
-                        <div className="prose">
-                          {msg.content}
-                        </div>
-                        <div className="text-xs mt-2 opacity-70">
-                          {msg.timestamp.toLocaleTimeString()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ChatMessage key={msg.id} message={msg} />
                 ))
               )}
             </div>
