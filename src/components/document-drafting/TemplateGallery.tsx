@@ -1,11 +1,8 @@
 
-import { FileText, Eye } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
 
 interface TemplateGalleryProps {
   onSelectTemplate: (title: string, prompt: string) => void;
@@ -13,9 +10,6 @@ interface TemplateGalleryProps {
 
 const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
   const { toast } = useToast();
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [previewContent, setPreviewContent] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
 
   const templates = [
     {
@@ -80,10 +74,20 @@ const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
     }
   ];
 
-  const handlePreview = (template: typeof templates[0]) => {
-    setSelectedTemplate(template.title);
-    setPreviewContent(template.preview);
-    setIsEditing(false);
+  const handleSelectTemplate = (template: typeof templates[0]) => {
+    toast({
+      title: "Loading Template",
+      description: "Please wait while we prepare your template...",
+    });
+
+    // Simulate loading time
+    setTimeout(() => {
+      onSelectTemplate(template.title.toLowerCase(), template.preview);
+      toast({
+        title: "Template Loaded",
+        description: `${template.title} template has been loaded successfully.`,
+      });
+    }, 1500);
   };
 
   return (
@@ -95,80 +99,22 @@ const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
               <CardTitle className="text-lg">{template.title}</CardTitle>
               <CardDescription>{template.description}</CardDescription>
             </CardHeader>
-            <CardContent className="flex gap-2">
+            <CardContent>
               <Button 
                 variant="outline" 
-                className="flex-1" 
-                onClick={() => {
-                  onSelectTemplate(template.title.toLowerCase(), `Generate a ${template.title} document`);
-                  toast({
-                    title: "Template Selected",
-                    description: `${template.title} template has been loaded.`,
-                  });
-                }}
+                className="w-full" 
+                onClick={() => handleSelectTemplate(template)}
               >
                 <FileText className="w-4 h-4 mr-2" />
                 Use Template
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => handlePreview(template)}
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Preview
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      <Dialog open={!!selectedTemplate} onOpenChange={() => setSelectedTemplate(null)}>
-        <DialogContent className="max-w-4xl h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>{selectedTemplate} Preview</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col h-full">
-            {isEditing ? (
-              <Textarea
-                value={previewContent}
-                onChange={(e) => setPreviewContent(e.target.value)}
-                className="flex-1 min-h-[500px] font-mono text-sm"
-              />
-            ) : (
-              <div className="flex-1 overflow-auto whitespace-pre-wrap font-mono text-sm bg-neutral-50 p-4 rounded-lg">
-                {previewContent}
-              </div>
-            )}
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditing(!isEditing)}
-              >
-                {isEditing ? "Preview" : "Edit"}
-              </Button>
-              <Button
-                onClick={() => {
-                  if (selectedTemplate) {
-                    onSelectTemplate(
-                      selectedTemplate.toLowerCase(),
-                      previewContent
-                    );
-                    setSelectedTemplate(null);
-                    toast({
-                      title: "Template Selected",
-                      description: `${selectedTemplate} template has been loaded with your edits.`,
-                    });
-                  }
-                }}
-              >
-                Use Template
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
 
 export default TemplateGallery;
+
