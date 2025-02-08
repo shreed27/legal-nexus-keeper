@@ -44,28 +44,22 @@ const Chatbot = () => {
   ];
 
   const generateResponse = (userMessage: string) => {
-    const lowerCaseMessage = userMessage.toLowerCase();
-    
-    // Check if the message is about the assistant's identity
-    if (lowerCaseMessage.includes('who') || 
-        lowerCaseMessage.includes('what are you') || 
-        lowerCaseMessage.includes('your name') ||
-        lowerCaseMessage.includes('about you')) {
-      return "I'm your AVENIX.PRO Legal Assistant to help you. I specialize in providing legal information and assistance. How can I help you with your legal questions today?";
+    if (userMessage.toLowerCase().includes('hello') || userMessage.toLowerCase().includes('hi')) {
+      return "Hello! I'm your AVENIX.PRO Legal Assistant. How can I help you with your legal questions today?";
     }
     
-    // For non-legal questions
-    if (!lowerCaseMessage.includes('law') && 
-        !lowerCaseMessage.includes('legal') && 
-        !lowerCaseMessage.includes('court') && 
-        !lowerCaseMessage.includes('rights') &&
-        !lowerCaseMessage.includes('contract') &&
-        !lowerCaseMessage.includes('case')) {
-      return "I'm your AVENIX.PRO Legal Assistant. I'm designed to help specifically with legal questions. Could you please rephrase your question in a legal context?";
+    // Check if the message is about legal topics
+    if (!userMessage.toLowerCase().includes('law') && 
+        !userMessage.toLowerCase().includes('legal') && 
+        !userMessage.toLowerCase().includes('court') && 
+        !userMessage.toLowerCase().includes('rights') &&
+        !userMessage.toLowerCase().includes('contract') &&
+        !userMessage.toLowerCase().includes('case')) {
+      return "I'm your AVENIX.PRO Legal Assistant. I specialize in legal matters. Could you please rephrase your question in a legal context?";
     }
     
     // Default legal response
-    return "Based on the legal context of your question, here's my analysis: [Legal response would be generated here]. Please note that this is general legal information and not legal advice. For specific legal advice, please consult with a qualified attorney.";
+    return "Based on your legal question, here's my analysis: [Legal response would be generated here]. Please note that this is general legal information and not legal advice. For specific legal advice, please consult with a qualified attorney.";
   };
 
   const handleSend = (e: React.FormEvent) => {
