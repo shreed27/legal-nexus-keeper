@@ -6,7 +6,6 @@ import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import PricingModal from "@/components/pricing/PricingModal";
 
 interface Message {
   id: string;
@@ -18,7 +17,6 @@ interface Message {
 const Chatbot = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [showPricingModal, setShowPricingModal] = useState(false);
   const { toast } = useToast();
 
   const handleSend = (e: React.FormEvent) => {
@@ -36,8 +34,10 @@ const Chatbot = () => {
     setMessages(prev => [...prev, newMessage]);
     setMessage("");
     
-    // For demo purposes, show pricing modal
-    setShowPricingModal(true);
+    toast({
+      title: "Message Sent",
+      description: "Your message has been processed",
+    });
   };
 
   return (
@@ -96,12 +96,6 @@ const Chatbot = () => {
           </div>
         </div>
       </main>
-
-      <PricingModal
-        isOpen={showPricingModal}
-        onClose={() => setShowPricingModal(false)}
-        feature="AI Legal Assistant"
-      />
     </div>
   );
 };

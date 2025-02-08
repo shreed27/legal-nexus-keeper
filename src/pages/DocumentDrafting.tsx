@@ -6,16 +6,16 @@ import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import PricingModal from "@/components/pricing/PricingModal";
 
 const DocumentDrafting = () => {
   const [prompt, setPrompt] = useState("");
-  const [showPricingModal, setShowPricingModal] = useState(false);
   const { toast } = useToast();
 
   const handleDraft = () => {
-    // For demo purposes, show pricing modal
-    setShowPricingModal(true);
+    toast({
+      title: "Document Generation Started",
+      description: "Your document is being generated...",
+    });
   };
 
   return (
@@ -65,12 +65,6 @@ const DocumentDrafting = () => {
           </div>
         </div>
       </main>
-
-      <PricingModal
-        isOpen={showPricingModal}
-        onClose={() => setShowPricingModal(false)}
-        feature="AI Document Drafting"
-      />
     </div>
   );
 };
