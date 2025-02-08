@@ -1,8 +1,10 @@
+
 import { Scale, Briefcase, Clock, Calendar } from 'lucide-react';
 import StatCard from '../components/dashboard/StatCard';
 import Sidebar from '../components/layout/Sidebar';
 import Header from '../components/layout/Header';
 import { useEffect, useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard = () => {
   const [documentCount, setDocumentCount] = useState(0);
@@ -11,6 +13,7 @@ const Dashboard = () => {
     pendingHearings: 0,
     upcomingHearings: 0
   });
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const storedFiles = localStorage.getItem('storedFiles');
@@ -62,24 +65,24 @@ const Dashboard = () => {
       <Sidebar />
       <Header />
       
-      <main className="ml-64 pt-20 p-8">
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0' : 'ml-64'} pt-20 p-4 md:p-8`}>
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-neutral-dark mb-8 animate-fade-in">Dashboard</h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             {stats.map((stat, index) => (
               <StatCard key={index} {...stat} />
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-neutral-100 animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+            <div className="glass-card p-6 animate-fade-in">
               <h2 className="text-xl font-bold mb-4">Recent Cases</h2>
               <div className="space-y-4">
                 {JSON.parse(localStorage.getItem('cases') || '[]')
                   .slice(0, 3)
                   .map((case_: any, i: number) => (
-                    <div key={i} className="p-4 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
+                    <div key={i} className="p-4 glass-card hover:bg-white/50 transition-colors">
                       <h3 className="font-medium">{case_.party_name}</h3>
                       <p className="text-sm text-neutral-600 mt-1">Case #{case_.case_number}</p>
                     </div>
@@ -87,14 +90,14 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-neutral-100 animate-fade-in">
+            <div className="glass-card p-6 animate-fade-in">
               <h2 className="text-xl font-bold mb-4">Upcoming Hearings</h2>
               <div className="space-y-4">
                 {JSON.parse(localStorage.getItem('cases') || '[]')
                   .filter((case_: any) => new Date(case_.next_date) > new Date())
                   .slice(0, 3)
                   .map((case_: any, i: number) => (
-                    <div key={i} className="p-4 border border-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors">
+                    <div key={i} className="p-4 glass-card hover:bg-white/50 transition-colors">
                       <h3 className="font-medium">{case_.party_name}</h3>
                       <p className="text-sm text-neutral-600 mt-1">Next Hearing: {case_.next_date}</p>
                     </div>
