@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
 import { Case } from "@/types/case";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Cases = () => {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ const Cases = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
   const [cases, setCases] = useState<Case[]>([]);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const storedCases = localStorage.getItem('cases');
@@ -56,48 +59,59 @@ const Cases = () => {
       <Sidebar />
       <Header />
       
-      <main className="ml-64 pt-20 p-8">
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-neutral-dark">Cases</h1>
-            <div className="flex gap-4">
-              <div className="relative w-64">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-neutral-dark">Cases</h1>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative w-full sm:w-64">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search cases..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8"
+                  className="pl-8 w-full bg-white/80 backdrop-blur-sm"
                 />
               </div>
-              <Button onClick={() => setShowNewCaseDialog(true)}>
+              <Button 
+                onClick={() => setShowNewCaseDialog(true)}
+                className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Case
               </Button>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="glass-card rounded-xl overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Party Name</TableHead>
-                  <TableHead>Case No.</TableHead>
-                  <TableHead>Court</TableHead>
+                  <TableHead className="font-semibold">Party Name</TableHead>
+                  <TableHead className="font-semibold">Case No.</TableHead>
+                  <TableHead className="font-semibold">Court</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCases.map((case_) => (
-                  <TableRow 
-                    key={case_.id}
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => handleCaseClick(case_)}
-                  >
-                    <TableCell className="font-medium">{case_.party_name}</TableCell>
-                    <TableCell>{case_.case_number}</TableCell>
-                    <TableCell>{case_.court_name}</TableCell>
+                {filteredCases.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-8 text-neutral-600">
+                      No cases found
+                    </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  filteredCases.map((case_) => (
+                    <TableRow 
+                      key={case_.id}
+                      className="cursor-pointer hover:bg-white/50 transition-colors"
+                      onClick={() => handleCaseClick(case_)}
+                    >
+                      <TableCell className="font-medium">{case_.party_name}</TableCell>
+                      <TableCell>{case_.case_number}</TableCell>
+                      <TableCell>{case_.court_name}</TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>

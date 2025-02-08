@@ -1,4 +1,3 @@
-
 import { Brain, PenTool, SpellCheck, LayoutTemplate, Rocket } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
@@ -8,9 +7,11 @@ import DocumentGenerator from "@/components/document-drafting/DocumentGenerator"
 import TemplateGallery from "@/components/document-drafting/TemplateGallery";
 import RecentDocuments from "@/components/document-drafting/RecentDocuments";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const DocumentDrafting = () => {
   const [activeTab, setActiveTab] = useState("generate");
+  const isMobile = useIsMobile();
   const features = [
     {
       icon: Brain,
@@ -39,32 +40,38 @@ const DocumentDrafting = () => {
       <Sidebar />
       <Header />
       
-      <main className="ml-64 pt-20 p-8">
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
             <div className="p-3 bg-primary/10 rounded-xl">
-              <PenTool className="h-8 w-8 text-primary" />
+              <PenTool className="h-6 w-6 md:h-8 md:w-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-neutral-dark">AI Document Drafting</h1>
-              <p className="text-neutral-600 mt-1">Create professional legal documents in minutes</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-neutral-dark">AI Document Drafting</h1>
+              <p className="text-neutral-600 mt-1 text-sm md:text-base">Create professional legal documents in minutes</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {features.map((feature, index) => (
-              <FeatureCard 
-                key={index}
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-              />
+              <div 
+                key={index} 
+                className="glass-card p-4 hover:scale-102 transition-all duration-300 rounded-xl"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20">
+                    <feature.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-sm gradient-text">{feature.title}</h3>
+                </div>
+                <p className="text-xs text-neutral-600">{feature.description}</p>
+              </div>
             ))}
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="glass-card rounded-xl p-4 md:p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid grid-cols-2 w-[400px]">
+              <TabsList className="w-full md:w-[400px] grid grid-cols-2">
                 <TabsTrigger value="generate">Generate Document</TabsTrigger>
                 <TabsTrigger value="templates">Templates</TabsTrigger>
               </TabsList>
@@ -76,7 +83,6 @@ const DocumentDrafting = () => {
               <TabsContent value="templates">
                 <TemplateGallery 
                   onSelectTemplate={(title, prompt) => {
-                    // Switch to generate tab and pass the template data
                     setActiveTab("generate");
                   }} 
                 />
