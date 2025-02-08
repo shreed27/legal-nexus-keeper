@@ -37,11 +37,18 @@ const Landing = () => {
               Experience the future of legal practice management with AI-powered tools
               and seamless workflow automation.
             </p>
-            <Button size="lg" asChild className="glass-card neon-glow">
-              <Link to="/chatbot" className="flex items-center gap-2">
-                Try AI Assistant
-              </Link>
-            </Button>
+            <div className="flex justify-center gap-4">
+              <Button size="lg" asChild className="glass-card neon-glow">
+                <Link to="/chatbot" className="flex items-center gap-2">
+                  Try AI Assistant
+                </Link>
+              </Button>
+              <Button size="lg" asChild className="glass-card neon-glow">
+                <Link to="/dashboard" className="flex items-center gap-2">
+                  Go to Dashboard
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
