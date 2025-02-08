@@ -1,3 +1,4 @@
+
 import { Brain, PenTool, SpellCheck, LayoutTemplate, Rocket } from "lucide-react";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
@@ -6,8 +7,10 @@ import FeatureCard from "@/components/document-drafting/FeatureCard";
 import DocumentGenerator from "@/components/document-drafting/DocumentGenerator";
 import TemplateGallery from "@/components/document-drafting/TemplateGallery";
 import RecentDocuments from "@/components/document-drafting/RecentDocuments";
+import { useState } from "react";
 
 const DocumentDrafting = () => {
+  const [activeTab, setActiveTab] = useState("generate");
   const features = [
     {
       icon: Brain,
@@ -60,7 +63,7 @@ const DocumentDrafting = () => {
           </div>
 
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <Tabs defaultValue="generate" className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <TabsList className="grid grid-cols-2 w-[400px]">
                 <TabsTrigger value="generate">Generate Document</TabsTrigger>
                 <TabsTrigger value="templates">Templates</TabsTrigger>
@@ -73,7 +76,8 @@ const DocumentDrafting = () => {
               <TabsContent value="templates">
                 <TemplateGallery 
                   onSelectTemplate={(title, prompt) => {
-                    // Handle template selection if needed
+                    // Switch to generate tab and pass the template data
+                    setActiveTab("generate");
                   }} 
                 />
               </TabsContent>

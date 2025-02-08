@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import DocumentPreview from "./DocumentPreview";
 
 const DocumentGenerator = () => {
   const [prompt, setPrompt] = useState("");
@@ -65,6 +66,17 @@ const DocumentGenerator = () => {
       });
     }, 2000);
   };
+
+  // Update prompt when called from TemplateGallery
+  useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateContent = urlParams.get('template');
+    if (templateContent) {
+      setPrompt(decodeURIComponent(templateContent));
+      // Clean up the URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   return (
     <div id="document-generator" className="space-y-6">
@@ -127,11 +139,7 @@ const DocumentGenerator = () => {
       </Button>
 
       {generatedContent && (
-        <div className="mt-6 space-y-4">
-          <div className="bg-neutral-50 p-4 rounded-lg min-h-[400px] whitespace-pre-wrap font-mono">
-            {generatedContent}
-          </div>
-        </div>
+        <DocumentPreview content={generatedContent} />
       )}
     </div>
   );

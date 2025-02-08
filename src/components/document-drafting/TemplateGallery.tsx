@@ -80,6 +80,11 @@ const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
       description: "Please wait while we prepare your template...",
     });
 
+    // Add template content to URL and switch to generate tab
+    const searchParams = new URLSearchParams();
+    searchParams.set('template', encodeURIComponent(template.preview));
+    window.history.pushState({}, '', `${window.location.pathname}?${searchParams.toString()}`);
+
     // Simulate loading time
     setTimeout(() => {
       onSelectTemplate(template.title.toLowerCase(), template.preview);
@@ -117,4 +122,3 @@ const TemplateGallery = ({ onSelectTemplate }: TemplateGalleryProps) => {
 };
 
 export default TemplateGallery;
-
