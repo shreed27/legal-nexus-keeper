@@ -25,14 +25,14 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#3BB9FF",
-          light: "#7CCFFF",
-          dark: "#0095FF",
+          DEFAULT: "#1EAEDB", // Bright turquoise from logo
+          light: "#33C3F0",
+          dark: "#0E9CC9",
         },
         secondary: {
-          DEFAULT: "#90EE90",
-          light: "#B4F5B4",
-          dark: "#6BC86B",
+          DEFAULT: "#ea384c", // Red accent from logo
+          light: "#ff4d61",
+          dark: "#d62438",
         },
         neutral: {
           DEFAULT: "#8E9196",
@@ -40,9 +40,9 @@ export default {
           dark: "#1A1F2C",
         },
         accent: {
-          DEFAULT: "#FFB627",
-          light: "#FFD27D",
-          dark: "#FF9900",
+          DEFAULT: "#1EAEDB",
+          light: "#33C3F0",
+          dark: "#0E9CC9",
         },
       },
       borderRadius: {

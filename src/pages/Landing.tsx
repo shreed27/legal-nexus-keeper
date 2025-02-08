@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles, ArrowRight, Check, Brain, MessageCircle } from "lucide-react";
+import { Sparkles, Check, Brain, MessageCircle } from "lucide-react";
 
 const Landing = () => {
   return (
@@ -9,10 +9,14 @@ const Landing = () => {
       <nav className="fixed w-full glass-morphism z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <span className="text-2xl font-bold gradient-text">AVENIX.PRO</span>
-            <Button asChild className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white">
-              <Link to="/dashboard">Access Dashboard</Link>
-            </Button>
+            <div className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/e9bf099f-9fa9-4c93-963c-44cd8f6fd504.png" 
+                alt="Avenix.Pro Logo" 
+                className="h-8 w-auto"
+              />
+              <span className="text-2xl font-bold text-primary">AVENIX.PRO</span>
+            </div>
           </div>
         </div>
       </nav>
@@ -25,7 +29,7 @@ const Landing = () => {
                 Revolutionizing Legal Practice
               </span>
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in gradient-text leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in leading-tight">
               Your Legal Practice,{" "}
               <span className="text-primary">Reimagined</span>
             </h1>
@@ -33,30 +37,25 @@ const Landing = () => {
               Experience the future of legal practice management with AI-powered tools
               and seamless workflow automation.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
-              <Button size="lg" asChild className="glass-card neon-glow w-full sm:w-auto">
-                <Link to="/dashboard" className="flex items-center gap-2">
-                  Get Started <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="glass-card w-full sm:w-auto">
-                <Link to="/chatbot">Try AI Assistant</Link>
-              </Button>
-            </div>
+            <Button size="lg" asChild className="glass-card neon-glow">
+              <Link to="/chatbot" className="flex items-center gap-2">
+                Try AI Assistant
+              </Link>
+            </Button>
           </div>
         </section>
 
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-primary">
               Next-Generation Legal Tools
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="glass-card p-6 rounded-xl hover-scale">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4">
                   <Brain className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-4 gradient-text">AI-Powered Research</h3>
+                <h3 className="text-xl font-semibold mb-4 text-primary">AI-Powered Research</h3>
                 <p className="text-neutral-600">
                   Leverage advanced AI to streamline your legal research and documentation.
                 </p>
@@ -69,11 +68,12 @@ const Landing = () => {
                   ))}
                 </ul>
               </div>
+
               <div className="glass-card p-6 rounded-xl hover-scale">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4">
                   <Sparkles className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-4 gradient-text">Workflow Automation</h3>
+                <h3 className="text-xl font-semibold mb-4 text-primary">Workflow Automation</h3>
                 <p className="text-neutral-600">
                   Automate repetitive tasks and focus on what matters most - your clients.
                 </p>
@@ -86,11 +86,12 @@ const Landing = () => {
                   ))}
                 </ul>
               </div>
+
               <div className="glass-card p-6 rounded-xl hover-scale">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4">
                   <MessageCircle className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-4 gradient-text">Client Portal</h3>
+                <h3 className="text-xl font-semibold mb-4 text-primary">Client Portal</h3>
                 <p className="text-neutral-600">
                   Provide a seamless experience for your clients with our modern portal.
                 </p>
