@@ -24,13 +24,13 @@ const ChatContainer = ({
   handleFileUpload,
 }: ChatContainerProps) => {
   return (
-    <div className="glass-morphism rounded-2xl shadow-xl flex flex-col h-[500px] md:h-[700px] animate-fade-in">
-      <div className="flex items-center justify-between p-4 md:p-6 border-b border-neutral-200/50">
-        <div className="text-sm text-neutral-600">
+    <div className="glass-card rounded-2xl shadow-xl flex flex-col h-[500px] md:h-[700px] animate-fade-in">
+      <div className="flex items-center justify-between p-3 md:p-4 border-b border-white/20">
+        <div className="text-xs md:text-sm text-neutral-600">
           {documents.length > 0 ? `${documents.length} document(s) uploaded` : 'No documents uploaded'}
         </div>
         <Button variant="outline" size="sm" className="bg-white/50 border-white/20 hover:bg-white/60" asChild>
-          <label className="cursor-pointer">
+          <label className="cursor-pointer flex items-center text-xs md:text-sm">
             <input
               type="file"
               className="hidden"
@@ -38,13 +38,13 @@ const ChatContainer = ({
               accept=".txt,.doc,.docx,.pdf"
               multiple
             />
-            <Upload className="w-4 h-4 mr-2" />
+            <Upload className="w-3 h-3 md:w-4 md:h-4 mr-2" />
             Upload Document
           </label>
         </Button>
       </div>
 
-      <div className="p-4 md:p-6 flex-1 overflow-y-auto space-y-6 scrollbar-thin scrollbar-thumb-neutral-200 scrollbar-track-transparent">
+      <div className="p-4 flex-1 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
         {messages.length === 0 ? (
           <WelcomeMessage />
         ) : (

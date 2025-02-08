@@ -65,41 +65,43 @@ const Dashboard = () => {
       <Sidebar />
       <Header />
       
-      <main className={`transition-all duration-300 ${isMobile ? 'ml-0' : 'ml-64'} pt-20 p-4 md:p-8`}>
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-neutral-dark mb-8 animate-fade-in">Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-dark mb-6 md:mb-8 animate-fade-in gradient-text">
+            Dashboard Overview
+          </h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 md:mb-8">
             {stats.map((stat, index) => (
               <StatCard key={index} {...stat} />
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
-            <div className="glass-card p-6 animate-fade-in">
-              <h2 className="text-xl font-bold mb-4">Recent Cases</h2>
-              <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            <div className="glass-card p-4 md:p-6 animate-fade-in">
+              <h2 className="text-lg md:text-xl font-bold mb-4 gradient-text">Recent Cases</h2>
+              <div className="space-y-3">
                 {JSON.parse(localStorage.getItem('cases') || '[]')
                   .slice(0, 3)
                   .map((case_: any, i: number) => (
-                    <div key={i} className="p-4 glass-card hover:bg-white/50 transition-colors">
-                      <h3 className="font-medium">{case_.party_name}</h3>
-                      <p className="text-sm text-neutral-600 mt-1">Case #{case_.case_number}</p>
+                    <div key={i} className="p-3 md:p-4 glass-card hover:bg-white/50 transition-colors">
+                      <h3 className="font-medium text-sm md:text-base">{case_.party_name}</h3>
+                      <p className="text-xs md:text-sm text-neutral-600 mt-1">Case #{case_.case_number}</p>
                     </div>
                   ))}
               </div>
             </div>
 
-            <div className="glass-card p-6 animate-fade-in">
-              <h2 className="text-xl font-bold mb-4">Upcoming Hearings</h2>
-              <div className="space-y-4">
+            <div className="glass-card p-4 md:p-6 animate-fade-in">
+              <h2 className="text-lg md:text-xl font-bold mb-4 gradient-text">Upcoming Hearings</h2>
+              <div className="space-y-3">
                 {JSON.parse(localStorage.getItem('cases') || '[]')
                   .filter((case_: any) => new Date(case_.next_date) > new Date())
                   .slice(0, 3)
                   .map((case_: any, i: number) => (
-                    <div key={i} className="p-4 glass-card hover:bg-white/50 transition-colors">
-                      <h3 className="font-medium">{case_.party_name}</h3>
-                      <p className="text-sm text-neutral-600 mt-1">Next Hearing: {case_.next_date}</p>
+                    <div key={i} className="p-3 md:p-4 glass-card hover:bg-white/50 transition-colors">
+                      <h3 className="font-medium text-sm md:text-base">{case_.party_name}</h3>
+                      <p className="text-xs md:text-sm text-neutral-600 mt-1">Next Hearing: {case_.next_date}</p>
                     </div>
                   ))}
               </div>

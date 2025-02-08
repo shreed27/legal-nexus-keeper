@@ -115,7 +115,7 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-white text-neutral-700">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-white">
       {isMobile && (
         <button
           onClick={toggleSidebar}
@@ -130,10 +130,22 @@ const Chatbot = () => {
       </div>
       <Header />
       
-      <main className={`transition-all duration-300 ${isMobile ? 'ml-0' : 'md:ml-64'} pt-16 md:pt-20 p-4 md:p-8`}>
+      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'md:ml-64 px-8'} pt-16 md:pt-20`}>
         <div className="max-w-6xl mx-auto">
           <ChatHeader />
-          <Features features={features} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {features.map((feature, index) => (
+              <div key={index} className="glass-card p-4 hover:scale-105 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20">
+                    <feature.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-sm gradient-text">{feature.title}</h3>
+                </div>
+                <p className="text-xs text-neutral-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
           <ChatContainer
             messages={messages}
             documents={documents}
