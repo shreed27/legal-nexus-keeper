@@ -37,7 +37,10 @@ const Auth = () => {
         .select()
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Profile creation error:", profileError);
+        throw new Error(profileError.message);
+      }
 
       if (profileData) {
         toast({
@@ -47,7 +50,6 @@ const Auth = () => {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      console.error("Auth error:", error);
       toast({
         title: "Error",
         description: error.message || "An error occurred during registration",
