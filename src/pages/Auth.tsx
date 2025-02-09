@@ -20,7 +20,7 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // For signup, we'll first create the user
+        // For signup, we'll create the user with auto-confirm enabled
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -32,28 +32,38 @@ const Auth = () => {
         });
         
         if (signUpError) throw signUpError;
-        
-        // Then immediately sign them in
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+
+        // After successful signup, automatically sign in
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        
+
         if (signInError) throw signInError;
-        
-        toast({
-          title: "Success",
-          description: "Account created and logged in successfully!",
-        });
-        navigate("/dashboard");
+
+        if (signInData.user) {
+          toast({
+            title: "Success",
+            description: "Account created and logged in successfully!",
+          });
+          navigate("/dashboard");
+        }
       } else {
-        // For sign in, just attempt to sign in directly
-        const { error } = await supabase.auth.signInWithPassword({
+        // For sign in
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
-        navigate("/dashboard");
+
+        if (signInError) throw signInError;
+
+        if (signInData.user) {
+          toast({
+            title: "Success",
+            description: "Logged in successfully!",
+          });
+          navigate("/dashboard");
+        }
       }
     } catch (error: any) {
       toast({
