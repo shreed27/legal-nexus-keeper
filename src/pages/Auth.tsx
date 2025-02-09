@@ -20,15 +20,32 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              email,
+            }
+          }
+        });
+        
+        if (error) throw error;
+        
+        // Automatically sign in after signup
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        
+        if (signInError) throw signInError;
+        
         toast({
           title: "Success",
-          description: "Please check your email to verify your account",
+          description: "Account created successfully!",
         });
+        navigate("/dashboard");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
