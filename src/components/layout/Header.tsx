@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [notifications] = useState([
@@ -34,11 +34,18 @@ const Header = () => {
     }
   ]);
 
+  // Mock user data - in a real app, this would come from your auth context or API
+  const userData = {
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    role: 'Attorney',
+    joinedDate: 'January 2024'
+  };
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogout = () => {
-    // Clear any stored user data
     localStorage.removeItem('user');
     toast({
       title: "Logged out successfully",
@@ -83,15 +90,29 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <button className="flex items-center space-x-3 p-2 rounded-full hover:bg-neutral-100 transition-colors">
               <User size={20} className="text-neutral-600" />
-              <span className="font-medium text-neutral-600">John Doe</span>
+              <span className="font-medium text-neutral-600">{userData.name}</span>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align="end" className="w-72">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/profile" className="cursor-pointer">Profile Settings</Link>
-            </DropdownMenuItem>
+            <div className="px-4 py-3">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-medium text-neutral-900">{userData.name}</p>
+                  <p className="text-sm text-neutral-600">{userData.email}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-neutral-500">Role</p>
+                  <p className="text-sm text-neutral-700">{userData.role}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-neutral-500">Member since</p>
+                  <p className="text-sm text-neutral-700">{userData.joinedDate}</p>
+                </div>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
@@ -104,4 +125,3 @@ const Header = () => {
 };
 
 export default Header;
-
