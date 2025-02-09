@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Sparkles, Check, Brain, MessageCircle } from "lucide-react";
@@ -37,15 +36,10 @@ const Landing = () => {
               Experience the future of legal practice management with AI-powered tools
               and seamless workflow automation.
             </p>
-            <div className="flex justify-center gap-4">
-              <Button size="lg" asChild className="glass-card neon-glow">
-                <Link to="/chatbot" className="flex items-center gap-2">
-                  Try AI Assistant
-                </Link>
-              </Button>
+            <div className="flex justify-center">
               <Button size="lg" asChild className="glass-card neon-glow">
                 <Link to="/dashboard" className="flex items-center gap-2">
-                  Go to Dashboard
+                  Get Started
                 </Link>
               </Button>
             </div>
