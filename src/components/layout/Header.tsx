@@ -1,4 +1,3 @@
-
 import { Bell, User, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
@@ -24,6 +23,7 @@ interface Notification {
 const Header = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Mock user data - in a real app, this would come from your auth context or API
   const userData = {
@@ -37,6 +37,35 @@ const Header = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+      setUserId(session.user.id);
+    };
+
+    checkAuth();
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        navigate('/auth');
+      } else if (session) {
+        setUserId(session.user.id);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!userId) return;
+
     // Fetch initial notifications
     fetchNotifications();
 
@@ -48,7 +77,8 @@ const Header = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'notifications'
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`
         },
         (payload) => {
           console.log('Real-time notification update:', payload);
@@ -70,9 +100,11 @@ const Header = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [userId]);
 
   const fetchNotifications = async () => {
+    if (!userId) return;
+
     try {
       const { data, error } = await supabase
         .from('notifications')
@@ -86,15 +118,23 @@ const Header = () => {
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
     } catch (error) {
       console.error('Error fetching notifications:', error);
+      toast({
+        title: "Error fetching notifications",
+        description: "There was a problem loading your notifications.",
+        variant: "destructive",
+      });
     }
   };
 
   const markAsRead = async (notificationId: string) => {
+    if (!userId) return;
+
     try {
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
-        .eq('id', notificationId);
+        .eq('id', notificationId)
+        .eq('user_id', userId);
 
       if (error) throw error;
 
@@ -107,6 +147,11 @@ const Header = () => {
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking notification as read:', error);
+      toast({
+        title: "Error updating notification",
+        description: "There was a problem marking the notification as read.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -115,12 +160,11 @@ const Header = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      localStorage.removeItem('user');
       toast({
         title: "Logged out successfully",
         description: "You have been logged out of your account",
       });
-      navigate('/');
+      navigate('/auth');
     } catch (error) {
       console.error('Error logging out:', error);
       toast({
