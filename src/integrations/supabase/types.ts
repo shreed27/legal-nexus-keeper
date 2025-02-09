@@ -143,6 +143,36 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          gender: string
+          id: string
+          last_name: string
+          mobile_number: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          gender: string
+          id?: string
+          last_name: string
+          mobile_number: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          gender?: string
+          id?: string
+          last_name?: string
+          mobile_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

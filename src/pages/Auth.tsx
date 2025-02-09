@@ -5,10 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const Auth = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [gender, setGender] = useState<"male" | "female" | "other">("male");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -18,28 +23,26 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      // Generate a random email and password
-      const randomString = Math.random().toString(36).substring(7);
-      const tempEmail = `${randomString}@temp.com`;
-      const tempPassword = randomString + "A1!"; // Ensures password meets requirements
-
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: tempEmail,
-        password: tempPassword,
-        options: {
-          data: {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .insert([
+          {
             first_name: firstName,
             last_name: lastName,
+            email,
+            mobile_number: mobileNumber,
+            gender
           }
-        }
-      });
+        ])
+        .select()
+        .single();
 
-      if (signUpError) throw signUpError;
+      if (profileError) throw profileError;
 
-      if (signUpData.user) {
+      if (profileData) {
         toast({
           title: "Success",
-          description: "Account created successfully!",
+          description: "Registration successful!",
         });
         navigate("/dashboard");
       }
@@ -47,7 +50,7 @@ const Auth = () => {
       console.error("Auth error:", error);
       toast({
         title: "Error",
-        description: error.message || "An error occurred during authentication",
+        description: error.message || "An error occurred during registration",
         variant: "destructive",
       });
     } finally {
@@ -86,6 +89,50 @@ const Auth = () => {
               />
             </div>
 
+            <div>
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <Input
+                type="tel"
+                placeholder="Mobile Number"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
+                required
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Gender</Label>
+              <RadioGroup
+                value={gender}
+                onValueChange={(value) => setGender(value as "male" | "female" | "other")}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="male" id="male" />
+                  <Label htmlFor="male">Male</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="female" id="female" />
+                  <Label htmlFor="female">Female</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="other" id="other" />
+                  <Label htmlFor="other">Other</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
@@ -105,4 +152,3 @@ const Auth = () => {
 };
 
 export default Auth;
-
