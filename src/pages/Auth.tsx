@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,90 +7,41 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/dashboard");
-      }
-    };
-    checkSession();
-
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/dashboard");
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      if (isSignUp) {
-        // Sign up flow
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              email,
-            }
-          }
-        });
+      // Generate a random email and password
+      const randomString = Math.random().toString(36).substring(7);
+      const tempEmail = `${randomString}@temp.com`;
+      const tempPassword = randomString + "A1!"; // Ensures password meets requirements
 
-        if (signUpError) throw signUpError;
-
-        if (signUpData.user) {
-          // Immediately try to sign in after signup
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
-          if (signInError) {
-            console.error("Auto sign-in error:", signInError);
-            throw signInError;
-          }
-
-          if (signInData.user) {
-            toast({
-              title: "Success",
-              description: "Account created and logged in successfully!",
-            });
-            navigate("/dashboard");
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: tempEmail,
+        password: tempPassword,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
           }
         }
-      } else {
-        // Sign in flow
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+      });
+
+      if (signUpError) throw signUpError;
+
+      if (signUpData.user) {
+        toast({
+          title: "Success",
+          description: "Account created successfully!",
         });
-
-        if (signInError) throw signInError;
-
-        if (signInData.user) {
-          toast({
-            title: "Success",
-            description: "Logged in successfully!",
-          });
-          navigate("/dashboard");
-        }
+        navigate("/dashboard");
       }
     } catch (error: any) {
       console.error("Auth error:", error);
@@ -109,16 +60,16 @@ const Auth = () => {
       <div className="w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-lg">
           <h1 className="text-2xl font-bold text-center mb-6">
-            {isSignUp ? "Create an Account" : "Welcome Back"}
+            Create Your Account
           </h1>
           
           <form onSubmit={handleAuth} className="space-y-4">
             <div>
               <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 required
                 className="w-full"
               />
@@ -126,13 +77,12 @@ const Auth = () => {
             
             <div>
               <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
                 className="w-full"
-                minLength={6}
               />
             </div>
 
@@ -144,21 +94,10 @@ const Auth = () => {
               {isLoading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               ) : (
-                <span>{isSignUp ? "Sign Up" : "Sign In"}</span>
+                <span>Get Started</span>
               )}
             </Button>
           </form>
-
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-primary hover:underline"
-            >
-              {isSignUp
-                ? "Already have an account? Sign In"
-                : "Don't have an account? Sign Up"}
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -166,3 +105,4 @@ const Auth = () => {
 };
 
 export default Auth;
+
