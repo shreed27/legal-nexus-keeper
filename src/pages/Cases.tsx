@@ -18,6 +18,7 @@ import {
 import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
 import { Case } from "@/types/case";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 
 const Cases = () => {
   const navigate = useNavigate();
@@ -25,23 +26,69 @@ const Cases = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
   const [cases, setCases] = useState<Case[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const storedCases = localStorage.getItem('cases');
-    if (storedCases) {
-      setCases(JSON.parse(storedCases));
-    }
+    checkAuth();
+    fetchCases();
   }, []);
 
-  const handleAddCase = (newCase: Case) => {
-    const updatedCases = [{ ...newCase, hearings: [] }, ...cases];
-    setCases(updatedCases);
-    localStorage.setItem('cases', JSON.stringify(updatedCases));
-    toast({
-      title: "Success",
-      description: "New case has been registered successfully",
-    });
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate('/auth');
+    }
+  };
+
+  const fetchCases = async () => {
+    try {
+      const { data: casesData, error: casesError } = await supabase
+        .from('cases')
+        .select(`
+          *,
+          hearings (*)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (casesError) throw casesError;
+
+      setCases(casesData || []);
+    } catch (error) {
+      console.error('Error fetching cases:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load cases. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddCase = async (newCase: Omit<Case, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'hearings'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('cases')
+        .insert([newCase])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCases([{ ...data, hearings: [] }, ...cases]);
+      toast({
+        title: "Success",
+        description: "New case has been registered successfully",
+      });
+    } catch (error) {
+      console.error('Error adding case:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add case. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCaseClick = (caseData: Case) => {
@@ -53,6 +100,20 @@ const Cases = () => {
       case_.party_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       case_.case_number.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-light">
+        <Sidebar />
+        <Header />
+        <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
+          <div className="flex items-center justify-center h-[60vh]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-light">

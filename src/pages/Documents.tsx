@@ -7,37 +7,61 @@ import { Upload, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PricingModal from "@/components/pricing/PricingModal";
 import { useIsMobile } from "../hooks/use-mobile";
-
-interface StoredFile {
-  id: string;
-  name: string;
-  size: number;
-  uploadDate: string;
-}
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { Document } from "@/types/case";
 
 const MAX_STORAGE_GB = 5;
 const MAX_STORAGE_BYTES = MAX_STORAGE_GB * 1024 * 1024 * 1024;
 
 const Documents = () => {
   const [usedStorage, setUsedStorage] = useState(0);
-  const [files, setFiles] = useState<StoredFile[]>([]);
+  const [files, setFiles] = useState<Document[]>([]);
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const storedFiles = localStorage.getItem('storedFiles');
-    const storedUsage = localStorage.getItem('storageUsed');
-    
-    if (storedFiles) {
-      setFiles(JSON.parse(storedFiles));
-    }
-    if (storedUsage) {
-      setUsedStorage(parseInt(storedUsage));
-    }
+    checkAuth();
+    fetchDocuments();
   }, []);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate('/auth');
+    }
+  };
+
+  const fetchDocuments = async () => {
+    try {
+      const { data: documents, error } = await supabase
+        .from('documents')
+        .select('*')
+        .order('uploaded_at', { ascending: false });
+
+      if (error) throw error;
+
+      setFiles(documents || []);
+      
+      // Calculate used storage
+      const totalSize = (documents || []).reduce((acc, doc) => acc + doc.size, 0);
+      setUsedStorage(totalSize);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load documents. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles = event.target.files;
     if (!uploadedFiles?.length) return;
 
@@ -49,45 +73,81 @@ const Documents = () => {
       return;
     }
 
-    const newFiles = Array.from(uploadedFiles).map(file => ({
-      id: crypto.randomUUID(),
-      name: file.name,
-      size: file.size,
-      uploadDate: new Date().toISOString(),
-    }));
+    for (const file of uploadedFiles) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) throw new Error('No user session');
 
-    const updatedFiles = [...files, ...newFiles];
-    setFiles(updatedFiles);
-    setUsedStorage(newTotalSize);
-    
-    localStorage.setItem('storedFiles', JSON.stringify(updatedFiles));
-    localStorage.setItem('storageUsed', newTotalSize.toString());
-    
-    toast({
-      title: "Files uploaded successfully",
-      description: `${uploadedFiles.length} files uploaded`,
-    });
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${session.user.id}/${crypto.randomUUID()}.${fileExt}`;
 
+        const { error: uploadError } = await supabase.storage
+          .from('documents')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { error: dbError } = await supabase
+          .from('documents')
+          .insert({
+            name: file.name,
+            size: file.size,
+            storage_path: filePath,
+          });
+
+        if (dbError) throw dbError;
+
+        toast({
+          title: "Success",
+          description: `${file.name} uploaded successfully`,
+        });
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        toast({
+          title: "Error",
+          description: `Failed to upload ${file.name}`,
+          variant: "destructive",
+        });
+      }
+    }
+
+    fetchDocuments();
     event.target.value = '';
   };
 
-  const handleDeleteFile = (fileId: string) => {
-    const fileToDelete = files.find(f => f.id === fileId);
-    if (!fileToDelete) return;
+  const handleDeleteFile = async (fileId: string) => {
+    try {
+      const fileToDelete = files.find(f => f.id === fileId);
+      if (!fileToDelete) return;
 
-    const updatedFiles = files.filter(f => f.id !== fileId);
-    const newUsedStorage = usedStorage - fileToDelete.size;
+      const { error: storageError } = await supabase.storage
+        .from('documents')
+        .remove([fileToDelete.storage_path]);
 
-    setFiles(updatedFiles);
-    setUsedStorage(newUsedStorage);
+      if (storageError) throw storageError;
 
-    localStorage.setItem('storedFiles', JSON.stringify(updatedFiles));
-    localStorage.setItem('storageUsed', newUsedStorage.toString());
+      const { error: dbError } = await supabase
+        .from('documents')
+        .delete()
+        .eq('id', fileId);
 
-    toast({
-      title: "File deleted",
-      description: `${fileToDelete.name} has been removed`,
-    });
+      if (dbError) throw dbError;
+
+      setFiles(files.filter(f => f.id !== fileId));
+      setUsedStorage(prev => prev - fileToDelete.size);
+
+      toast({
+        title: "File deleted",
+        description: `${fileToDelete.name} has been removed`,
+      });
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete file. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatBytes = (bytes: number) => {
@@ -107,6 +167,20 @@ const Documents = () => {
   };
 
   const usedPercentage = (usedStorage / MAX_STORAGE_BYTES) * 100;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-light">
+        <Sidebar />
+        <Header />
+        <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
+          <div className="flex items-center justify-center h-[60vh]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-light">
@@ -170,7 +244,7 @@ const Documents = () => {
                       <div>
                         <h4 className="font-medium text-sm md:text-base">{file.name}</h4>
                         <p className="text-xs md:text-sm text-neutral-600">
-                          {formatBytes(file.size)} • Uploaded {formatDate(file.uploadDate)}
+                          {formatBytes(file.size)} • Uploaded {formatDate(file.uploaded_at)}
                         </p>
                       </div>
                       <Button

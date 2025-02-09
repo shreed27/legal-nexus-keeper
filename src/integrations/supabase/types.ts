@@ -9,6 +9,110 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      cases: {
+        Row: {
+          case_number: string
+          court_name: string
+          created_at: string
+          id: string
+          next_date: string | null
+          party_name: string
+          previous_date: string | null
+          stage: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_number: string
+          court_name: string
+          created_at?: string
+          id?: string
+          next_date?: string | null
+          party_name: string
+          previous_date?: string | null
+          stage?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_number?: string
+          court_name?: string
+          created_at?: string
+          id?: string
+          next_date?: string | null
+          party_name?: string
+          previous_date?: string | null
+          stage?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          id: string
+          name: string
+          size: number
+          storage_path: string
+          uploaded_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          size: number
+          storage_path: string
+          uploaded_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          size?: number
+          storage_path?: string
+          uploaded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hearings: {
+        Row: {
+          amount: number
+          case_id: string
+          created_at: string
+          date: string
+          id: string
+          stage: string
+          summary: string | null
+        }
+        Insert: {
+          amount?: number
+          case_id: string
+          created_at?: string
+          date: string
+          id?: string
+          stage: string
+          summary?: string | null
+        }
+        Update: {
+          amount?: number
+          case_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          stage?: string
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hearings_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string | null
