@@ -20,36 +20,39 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // For signup, we'll create the user with auto-confirm enabled
+        // Sign up flow
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
+            emailRedirectTo: window.location.origin,
             data: {
               email,
             }
           }
         });
-        
+
         if (signUpError) throw signUpError;
 
-        // After successful signup, automatically sign in
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (signInError) throw signInError;
-
-        if (signInData.user) {
-          toast({
-            title: "Success",
-            description: "Account created and logged in successfully!",
+        if (signUpData.user) {
+          // After successful signup, automatically sign in
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
           });
-          navigate("/dashboard");
+
+          if (signInError) throw signInError;
+
+          if (signInData.user) {
+            toast({
+              title: "Success",
+              description: "Account created and logged in successfully!",
+            });
+            navigate("/dashboard");
+          }
         }
       } else {
-        // For sign in
+        // Sign in flow
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -66,6 +69,7 @@ const Auth = () => {
         }
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         title: "Error",
         description: error.message,
