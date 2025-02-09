@@ -37,6 +37,12 @@ const Documents = () => {
 
   const fetchDocuments = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+
       const { data: documents, error } = await supabase
         .from('documents')
         .select('*')
@@ -65,6 +71,12 @@ const Documents = () => {
     const uploadedFiles = event.target.files;
     if (!uploadedFiles?.length) return;
 
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate('/auth');
+      return;
+    }
+
     const totalSize = Array.from(uploadedFiles).reduce((acc, file) => acc + file.size, 0);
     const newTotalSize = usedStorage + totalSize;
 
@@ -75,9 +87,6 @@ const Documents = () => {
 
     for (const file of uploadedFiles) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) throw new Error('No user session');
-
         const fileExt = file.name.split('.').pop();
         const filePath = `${session.user.id}/${crypto.randomUUID()}.${fileExt}`;
 
@@ -93,6 +102,7 @@ const Documents = () => {
             name: file.name,
             size: file.size,
             storage_path: filePath,
+            user_id: session.user.id
           });
 
         if (dbError) throw dbError;

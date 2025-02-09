@@ -43,6 +43,9 @@ const Cases = () => {
 
   const fetchCases = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
       const { data: casesData, error: casesError } = await supabase
         .from('cases')
         .select(`
@@ -68,9 +71,15 @@ const Cases = () => {
 
   const handleAddCase = async (newCase: Omit<Case, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'hearings'>) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('cases')
-        .insert([newCase])
+        .insert([{ ...newCase, user_id: session.user.id }])
         .select()
         .single();
 
