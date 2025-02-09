@@ -24,29 +24,31 @@ const Auth = () => {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: {
-              email,
-            }
-          }
         });
 
         if (signUpError) throw signUpError;
 
         if (signUpData.user) {
-          // After successful signup, automatically sign in
+          toast({
+            title: "Success",
+            description: "Account created successfully! Signing you in...",
+          });
+
+          // Attempt to sign in immediately after signup
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email,
             password,
           });
 
-          if (signInError) throw signInError;
+          if (signInError) {
+            console.error("Sign in error after signup:", signInError);
+            throw new Error("Failed to sign in after creating account. Please try signing in manually.");
+          }
 
           if (signInData.user) {
             toast({
               title: "Success",
-              description: "Account created and logged in successfully!",
+              description: "Logged in successfully!",
             });
             navigate("/dashboard");
           }
@@ -72,7 +74,7 @@ const Auth = () => {
       console.error("Auth error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "An error occurred during authentication",
         variant: "destructive",
       });
     } finally {
