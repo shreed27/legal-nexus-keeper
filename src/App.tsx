@@ -14,6 +14,7 @@ import DocumentDrafting from "./pages/DocumentDrafting";
 import ComplianceChecker from "./pages/ComplianceChecker";
 import Chatbot from "./pages/Chatbot";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/document-drafting" element={<DocumentDrafting />} />
           <Route path="/compliance" element={<ComplianceChecker />} />
           <Route path="/chatbot" element={<Chatbot />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
