@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,28 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/dashboard");
+      }
+    };
+    checkSession();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        navigate("/dashboard");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,31 +46,31 @@ const Auth = () => {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              email,
+            }
+          }
         });
 
         if (signUpError) throw signUpError;
 
         if (signUpData.user) {
-          toast({
-            title: "Success",
-            description: "Account created successfully! Signing you in...",
-          });
-
-          // Attempt to sign in immediately after signup
+          // Immediately try to sign in after signup
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email,
             password,
           });
 
           if (signInError) {
-            console.error("Sign in error after signup:", signInError);
-            throw new Error("Failed to sign in after creating account. Please try signing in manually.");
+            console.error("Auto sign-in error:", signInError);
+            throw signInError;
           }
 
           if (signInData.user) {
             toast({
               title: "Success",
-              description: "Logged in successfully!",
+              description: "Account created and logged in successfully!",
             });
             navigate("/dashboard");
           }
