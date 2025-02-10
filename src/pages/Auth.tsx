@@ -14,6 +14,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [gender, setGender] = useState<"male" | "female" | "other">("male");
+  const [passcode, setPasscode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -23,6 +24,11 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
+      // Validate passcode format (6 digits)
+      if (!/^\d{6}$/.test(passcode)) {
+        throw new Error("Passcode must be exactly 6 digits");
+      }
+
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .insert([
@@ -31,7 +37,8 @@ const Auth = () => {
             last_name: lastName,
             email,
             mobile_number: mobileNumber,
-            gender
+            gender,
+            passcode
           }
         ])
         .select()
@@ -109,6 +116,21 @@ const Auth = () => {
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
                 required
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <Input
+                type="password"
+                placeholder="6-digit Passcode"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                required
+                minLength={6}
+                maxLength={6}
+                pattern="\d{6}"
+                title="Please enter exactly 6 digits"
                 className="w-full"
               />
             </div>
