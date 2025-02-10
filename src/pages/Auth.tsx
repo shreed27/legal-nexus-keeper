@@ -26,22 +26,50 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const validatePasscode = (passcode: string) => {
+    return /^\d{6}$/.test(passcode);
+  };
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validateMobileNumber = (number: string) => {
+    return /^\d{10}$/.test(number);
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Validate passcode format (6 digits)
-      if (!/^\d{6}$/.test(registerPasscode)) {
+      // Validate all fields
+      if (!firstName.trim() || !lastName.trim()) {
+        throw new Error("Please fill in all name fields");
+      }
+
+      if (!validateEmail(registerEmail)) {
+        throw new Error("Please enter a valid email address");
+      }
+
+      if (!validateMobileNumber(mobileNumber)) {
+        throw new Error("Please enter a valid 10-digit mobile number");
+      }
+
+      if (!validatePasscode(registerPasscode)) {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
       // First check if the email already exists
       const { data: existingProfile, error: checkError } = await supabase
         .from('profiles')
-        .select('email')
+        .select('id')
         .eq('email', registerEmail)
         .maybeSingle();
+
+      if (checkError) {
+        throw new Error("An error occurred while checking email availability");
+      }
 
       if (existingProfile) {
         throw new Error("This email is already registered");
@@ -52,9 +80,9 @@ const Auth = () => {
         .from('profiles')
         .insert([
           {
-            first_name: firstName,
-            last_name: lastName,
-            email: registerEmail,
+            first_name: firstName.trim(),
+            last_name: lastName.trim(),
+            email: registerEmail.toLowerCase(),
             mobile_number: mobileNumber,
             gender,
             passcode: registerPasscode
@@ -64,22 +92,23 @@ const Auth = () => {
         .single();
 
       if (profileError) {
+        console.error("Registration error:", profileError);
         throw new Error(profileError.message);
       }
 
-      if (profileData) {
-        toast({
-          title: "Success",
-          description: "Registration successful! Please login.",
-        });
-        // Reset form and switch to login tab
-        setFirstName("");
-        setLastName("");
-        setRegisterEmail("");
-        setMobileNumber("");
-        setGender("male");
-        setRegisterPasscode("");
-      }
+      toast({
+        title: "Success",
+        description: "Registration successful! Please login.",
+      });
+
+      // Reset form
+      setFirstName("");
+      setLastName("");
+      setRegisterEmail("");
+      setMobileNumber("");
+      setGender("male");
+      setRegisterPasscode("");
+      
     } catch (error: any) {
       toast({
         title: "Error",
@@ -96,24 +125,40 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
+      if (!validateEmail(loginEmail)) {
+        throw new Error("Please enter a valid email address");
+      }
+
+      if (!validatePasscode(loginPasscode)) {
+        throw new Error("Passcode must be exactly 6 digits");
+      }
+
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select()
-        .eq('email', loginEmail)
+        .eq('email', loginEmail.toLowerCase())
         .eq('passcode', loginPasscode)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
+        console.error("Login error:", profileError);
+        throw new Error("An error occurred during login");
+      }
+
+      if (!profileData) {
         throw new Error("Invalid email or passcode");
       }
 
-      if (profileData) {
-        toast({
-          title: "Success",
-          description: "Login successful!",
-        });
-        navigate("/dashboard");
-      }
+      toast({
+        title: "Success",
+        description: `Welcome back, ${profileData.first_name}!`,
+      });
+
+      // Clear form
+      setLoginEmail("");
+      setLoginPasscode("");
+      
+      navigate("/dashboard");
     } catch (error: any) {
       toast({
         title: "Error",
@@ -215,10 +260,12 @@ const Auth = () => {
                 <div>
                   <Input
                     type="tel"
-                    placeholder="Mobile Number"
+                    placeholder="Mobile Number (10 digits)"
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
                     required
+                    pattern="\d{10}"
+                    title="Please enter exactly 10 digits"
                     className="w-full"
                   />
                 </div>
@@ -268,7 +315,7 @@ const Auth = () => {
                   {isLoading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   ) : (
-                    <span>Get Started</span>
+                    <span>Register</span>
                   )}
                 </Button>
               </form>
