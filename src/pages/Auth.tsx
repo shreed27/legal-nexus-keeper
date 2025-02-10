@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -150,6 +150,9 @@ const Auth = () => {
         throw new Error("Invalid email or passcode");
       }
 
+      // Store user info in localStorage for persistence
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
+
       // Log the data to help with debugging
       console.log("Login successful:", profileData);
 
@@ -162,7 +165,11 @@ const Auth = () => {
       setLoginEmail("");
       setLoginPasscode("");
       
-      navigate("/dashboard");
+      // Add a small delay to ensure the toast is visible before navigation
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
+      
     } catch (error: any) {
       console.error("Login error details:", error);
       toast({
@@ -174,6 +181,14 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
+
+  // Add an effect to check if user is already logged in
+  useEffect(() => {
+    const userProfile = localStorage.getItem('userProfile');
+    if (userProfile) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center p-4">
