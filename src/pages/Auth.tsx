@@ -64,7 +64,7 @@ const Auth = () => {
       const { data: existingProfile, error: checkError } = await supabase
         .from('profiles')
         .select('id')
-        .eq('email', registerEmail)
+        .ilike('email', registerEmail)
         .maybeSingle();
 
       if (checkError) {
@@ -133,10 +133,11 @@ const Auth = () => {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
+      // Updated to use case-insensitive email comparison
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select()
-        .eq('email', loginEmail.toLowerCase())
+        .ilike('email', loginEmail)
         .eq('passcode', loginPasscode)
         .maybeSingle();
 
@@ -149,6 +150,9 @@ const Auth = () => {
         throw new Error("Invalid email or passcode");
       }
 
+      // Log the data to help with debugging
+      console.log("Login successful:", profileData);
+
       toast({
         title: "Success",
         description: `Welcome back, ${profileData.first_name}!`,
@@ -160,6 +164,7 @@ const Auth = () => {
       
       navigate("/dashboard");
     } catch (error: any) {
+      console.error("Login error details:", error);
       toast({
         title: "Error",
         description: error.message || "An error occurred during login",
