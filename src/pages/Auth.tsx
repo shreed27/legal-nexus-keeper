@@ -36,6 +36,18 @@ const Auth = () => {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
+      // First check if the email already exists
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', registerEmail)
+        .maybeSingle();
+
+      if (existingProfile) {
+        throw new Error("This email is already registered");
+      }
+
+      // If email doesn't exist, proceed with registration
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .insert([
@@ -52,9 +64,6 @@ const Auth = () => {
         .single();
 
       if (profileError) {
-        if (profileError.code === '23505') { // Unique violation error code
-          throw new Error("This email is already registered");
-        }
         throw new Error(profileError.message);
       }
 
