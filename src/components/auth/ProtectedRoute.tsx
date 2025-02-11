@@ -1,6 +1,8 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { toast } from "@/components/ui/use-toast";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,10 +14,43 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const location = useLocation();
 
   useEffect(() => {
-    const checkAuth = () => {
-      const userProfile = localStorage.getItem('userProfile');
-      setIsAuthenticated(!!userProfile);
-      setIsLoading(false);
+    const checkAuth = async () => {
+      try {
+        // Check if user is authenticated
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
+        
+        if (!session) {
+          setIsAuthenticated(false);
+          setIsLoading(false);
+          return;
+        }
+
+        // Check if user is authorized
+        const { data: authorizedUser, error: authError } = await supabase
+          .from('authorized_users')
+          .select('is_active')
+          .eq('email', session.user.email)
+          .single();
+
+        if (authError || !authorizedUser || !authorizedUser.is_active) {
+          toast({
+            variant: "destructive",
+            title: "Access Denied",
+            description: "You are not authorized to access this application.",
+          });
+          await supabase.auth.signOut();
+          setIsAuthenticated(false);
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     checkAuth();
