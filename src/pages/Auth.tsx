@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -60,19 +60,15 @@ const Auth = () => {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
-      // First check if the email already exists
-      const { data: existingProfile, error: checkError } = await supabase
-        .from('profiles')
-        .select('id')
-        .ilike('email', registerEmail)
-        .maybeSingle();
+      // First check if the email is authorized
+      const { data: authorizedUser, error: authCheckError } = await supabase
+        .from('authorized_users')
+        .select('is_active')
+        .eq('email', registerEmail)
+        .single();
 
-      if (checkError) {
-        throw new Error("An error occurred while checking email availability");
-      }
-
-      if (existingProfile) {
-        throw new Error("This email is already registered");
+      if (authCheckError || !authorizedUser || !authorizedUser.is_active) {
+        throw new Error("This email is not authorized to access the application");
       }
 
       // If email doesn't exist, proceed with registration
@@ -133,28 +129,48 @@ const Auth = () => {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
-      // Updated to use case-insensitive email comparison
+      // First check if the user is authorized
+      const { data: authorizedUser, error: authCheckError } = await supabase
+        .from('authorized_users')
+        .select('is_active')
+        .eq('email', loginEmail)
+        .single();
+
+      if (authCheckError || !authorizedUser || !authorizedUser.is_active) {
+        throw new Error("This email is not authorized to access the application");
+      }
+
+      // Then verify credentials
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select()
-        .ilike('email', loginEmail)
+        .eq('email', loginEmail)
         .eq('passcode', loginPasscode)
-        .maybeSingle();
+        .single();
 
-      if (profileError) {
-        console.error("Login error:", profileError);
-        throw new Error("An error occurred during login");
-      }
-
-      if (!profileData) {
+      if (profileError || !profileData) {
         throw new Error("Invalid email or passcode");
       }
 
-      // Store user info in localStorage for persistence
-      localStorage.setItem('userProfile', JSON.stringify(profileData));
+      // Create a session using Supabase Auth
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: loginPasscode // Using passcode as password for simplicity
+      });
 
-      // Log the data to help with debugging
-      console.log("Login successful:", profileData);
+      if (signInError) {
+        // If user doesn't exist in auth, sign them up first
+        if (signInError.message.includes("Invalid login credentials")) {
+          const { error: signUpError } = await supabase.auth.signUp({
+            email: loginEmail,
+            password: loginPasscode,
+          });
+
+          if (signUpError) throw signUpError;
+        } else {
+          throw signInError;
+        }
+      }
 
       toast({
         title: "Success",
@@ -165,10 +181,8 @@ const Auth = () => {
       setLoginEmail("");
       setLoginPasscode("");
       
-      // Add a small delay to ensure the toast is visible before navigation
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 500);
+      // Navigate to dashboard
+      navigate("/dashboard");
       
     } catch (error: any) {
       console.error("Login error details:", error);
@@ -182,12 +196,16 @@ const Auth = () => {
     }
   };
 
-  // Add an effect to check if user is already logged in
+  // Check if user is already authenticated
   useEffect(() => {
-    const userProfile = localStorage.getItem('userProfile');
-    if (userProfile) {
-      navigate('/dashboard');
-    }
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/dashboard');
+      }
+    };
+
+    checkSession();
   }, [navigate]);
 
   return (
