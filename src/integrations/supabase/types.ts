@@ -178,36 +178,24 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles: {
+      users: {
         Row: {
           created_at: string
           email: string
-          first_name: string
-          gender: string
           id: string
-          last_name: string
-          mobile_number: string
-          passcode: string
+          password: string
         }
         Insert: {
           created_at?: string
           email: string
-          first_name: string
-          gender: string
           id?: string
-          last_name: string
-          mobile_number: string
-          passcode?: string
+          password: string
         }
         Update: {
           created_at?: string
           email?: string
-          first_name?: string
-          gender?: string
           id?: string
-          last_name?: string
-          mobile_number?: string
-          passcode?: string
+          password?: string
         }
         Relationships: []
       }
@@ -219,6 +207,13 @@ export type Database = {
       is_email_authorized: {
         Args: {
           check_email: string
+        }
+        Returns: boolean
+      }
+      verify_credentials: {
+        Args: {
+          check_email: string
+          check_password: string
         }
         Returns: boolean
       }

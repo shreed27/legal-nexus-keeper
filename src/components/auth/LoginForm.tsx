@@ -2,19 +2,19 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth, AuthFormData } from "@/hooks/useAuth";
+import { useAuth, LoginFormData } from "@/hooks/useAuth";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
-  const [passcode, setPasscode] = useState("");
+  const [password, setPassword] = useState("");
   const { handleLogin, isLoading } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data: AuthFormData = { email, passcode };
+    const data: LoginFormData = { email, password };
     if (await handleLogin(data)) {
       setEmail("");
-      setPasscode("");
+      setPassword("");
     }
   };
 
@@ -34,14 +34,10 @@ export const LoginForm = () => {
       <div>
         <Input
           type="password"
-          placeholder="6-digit Passcode"
-          value={passcode}
-          onChange={(e) => setPasscode(e.target.value)}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
-          minLength={6}
-          maxLength={6}
-          pattern="\d{6}"
-          title="Please enter exactly 6 digits"
           className="w-full"
         />
       </div>

@@ -2,9 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { RegisterForm } from "@/components/auth/RegisterForm";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -42,20 +40,8 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-lg">
-          <Tabs defaultValue="login" className="space-y-6">
-            <TabsList className="grid grid-cols-2 w-full">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login">
-              <LoginForm />
-            </TabsContent>
-
-            <TabsContent value="register">
-              <RegisterForm />
-            </TabsContent>
-          </Tabs>
+          <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+          <LoginForm />
         </div>
       </div>
     </div>
