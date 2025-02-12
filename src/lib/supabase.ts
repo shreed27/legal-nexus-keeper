@@ -14,3 +14,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
   },
 });
+
+// Add this console log to verify the values
+console.log('Supabase URL:', supabaseUrl);
+console.log('Supabase Key length:', supabaseAnonKey?.length);

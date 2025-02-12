@@ -18,14 +18,18 @@ export const useAuth = () => {
     setIsLoading(true);
 
     try {
+      console.log('Attempting to verify credentials...');
       const { data: isValid, error: verifyError } = await supabase
         .rpc('verify_credentials', { 
           check_email: data.email,
           check_password: data.password
         });
 
+      console.log('Verify response:', { isValid, verifyError });
+
       if (verifyError) {
-        throw new Error("Error verifying credentials");
+        console.error('Verification error:', verifyError);
+        throw new Error(`Error verifying credentials: ${verifyError.message}`);
       }
 
       if (!isValid) {
@@ -39,6 +43,7 @@ export const useAuth = () => {
       });
 
       if (signInError) {
+        console.log('Attempting signup after signin failure');
         // If sign in fails, try to sign up first
         const { error: signUpError } = await supabase.auth.signUp({
           email: data.email,
@@ -46,6 +51,7 @@ export const useAuth = () => {
         });
 
         if (signUpError) {
+          console.error('Signup error:', signUpError);
           throw new Error("Failed to create authentication session");
         }
 
@@ -56,6 +62,7 @@ export const useAuth = () => {
         });
 
         if (finalSignInError) {
+          console.error('Final signin error:', finalSignInError);
           throw new Error("Failed to create authentication session");
         }
       }
@@ -68,6 +75,7 @@ export const useAuth = () => {
       navigate("/dashboard");
       return true;
     } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         title: "Error",
         description: error.message || "An error occurred during login",
