@@ -60,14 +60,11 @@ const Auth = () => {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
-      // First check if the email is authorized
-      const { data: authorizedUser, error: authCheckError } = await supabase
-        .from('authorized_users')
-        .select('is_active')
-        .eq('email', registerEmail)
-        .single();
+      // First check if the email is authorized using is_email_authorized function
+      const { data: isAuthorized, error: authCheckError } = await supabase
+        .rpc('is_email_authorized', { check_email: registerEmail });
 
-      if (authCheckError || !authorizedUser || !authorizedUser.is_active) {
+      if (authCheckError || !isAuthorized) {
         throw new Error("This email is not authorized to access the application");
       }
 
@@ -129,14 +126,11 @@ const Auth = () => {
         throw new Error("Passcode must be exactly 6 digits");
       }
 
-      // First check if the user is authorized
-      const { data: authorizedUser, error: authCheckError } = await supabase
-        .from('authorized_users')
-        .select('is_active')
-        .eq('email', loginEmail)
-        .single();
+      // First check if the email is authorized using is_email_authorized function
+      const { data: isAuthorized, error: authCheckError } = await supabase
+        .rpc('is_email_authorized', { check_email: loginEmail });
 
-      if (authCheckError || !authorizedUser || !authorizedUser.is_active) {
+      if (authCheckError || !isAuthorized) {
         throw new Error("This email is not authorized to access the application");
       }
 
@@ -167,6 +161,14 @@ const Auth = () => {
           });
 
           if (signUpError) throw signUpError;
+          
+          // If sign up is successful, sign in
+          const { error: autoSignInError } = await supabase.auth.signInWithPassword({
+            email: loginEmail,
+            password: loginPasscode
+          });
+
+          if (autoSignInError) throw autoSignInError;
         } else {
           throw signInError;
         }
