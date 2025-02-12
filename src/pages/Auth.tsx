@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -130,7 +129,12 @@ const Auth = () => {
       const { data: isAuthorized, error: authCheckError } = await supabase
         .rpc('is_email_authorized', { check_email: loginEmail });
 
-      if (authCheckError || !isAuthorized) {
+      if (authCheckError) {
+        console.error("Authorization check error:", authCheckError);
+        throw new Error("Error checking authorization status");
+      }
+
+      if (!isAuthorized) {
         throw new Error("This email is not authorized to access the application");
       }
 
@@ -140,37 +144,52 @@ const Auth = () => {
         .select()
         .eq('email', loginEmail)
         .eq('passcode', loginPasscode)
-        .single();
+        .maybeSingle();
 
-      if (profileError || !profileData) {
+      if (profileError) {
+        console.error("Profile check error:", profileError);
+        throw new Error("Error verifying credentials");
+      }
+
+      if (!profileData) {
         throw new Error("Invalid email or passcode");
       }
 
-      // Create a session using Supabase Auth
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      // First try to sign in
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: loginEmail,
-        password: loginPasscode // Using passcode as password for simplicity
+        password: loginPasscode
       });
 
+      // If sign in fails, try to sign up and then sign in
       if (signInError) {
-        // If user doesn't exist in auth, sign them up first
-        if (signInError.message.includes("Invalid login credentials")) {
-          const { error: signUpError } = await supabase.auth.signUp({
-            email: loginEmail,
-            password: loginPasscode,
-          });
+        console.log("Sign in failed, attempting sign up:", signInError);
+        
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: loginEmail,
+          password: loginPasscode,
+          options: {
+            data: {
+              first_name: profileData.first_name,
+              last_name: profileData.last_name
+            }
+          }
+        });
 
-          if (signUpError) throw signUpError;
-          
-          // If sign up is successful, sign in
-          const { error: autoSignInError } = await supabase.auth.signInWithPassword({
-            email: loginEmail,
-            password: loginPasscode
-          });
+        if (signUpError) {
+          console.error("Sign up error:", signUpError);
+          throw new Error("Failed to create authentication session");
+        }
 
-          if (autoSignInError) throw autoSignInError;
-        } else {
-          throw signInError;
+        // Try signing in again after successful signup
+        const { error: finalSignInError } = await supabase.auth.signInWithPassword({
+          email: loginEmail,
+          password: loginPasscode
+        });
+
+        if (finalSignInError) {
+          console.error("Final sign in error:", finalSignInError);
+          throw new Error("Failed to create authentication session");
         }
       }
 
@@ -201,13 +220,32 @@ const Auth = () => {
   // Check if user is already authenticated
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/dashboard');
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        if (session) {
+          console.log("Active session found, redirecting to dashboard");
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error("Session check error:", error);
       }
     };
 
     checkSession();
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session);
+      if (session) {
+        navigate('/dashboard');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   return (
