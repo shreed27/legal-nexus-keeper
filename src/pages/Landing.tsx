@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles, Check, Brain, MessageCircle } from "lucide-react";
+import { Sparkles, Check, Brain, MessageCircle, CreditCard } from "lucide-react";
 
 const Landing = () => {
   return (
@@ -39,7 +39,7 @@ const Landing = () => {
             </p>
             <div className="flex justify-center">
               <Button size="lg" asChild className="glass-card neon-glow">
-                <Link to="/auth" className="flex items-center gap-2">
+                <Link to="/dashboard" className="flex items-center gap-2">
                   Get Started
                 </Link>
               </Button>
