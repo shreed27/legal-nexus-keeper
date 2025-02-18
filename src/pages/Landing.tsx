@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles, Check, Brain, MessageCircle, CreditCard } from "lucide-react";
+import { Sparkles, Check, Brain, MessageCircle } from "lucide-react";
 
 const Landing = () => {
   return (
