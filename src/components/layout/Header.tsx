@@ -1,5 +1,6 @@
-import { Bell, User, LogOut } from 'lucide-react';
-import { useState, useEffect } from 'react';
+
+import { Bell, User } from 'lucide-react';
+import { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from 'react-router-dom';
-import { supabase } from "@/integrations/supabase/client";
 
 interface Notification {
   id: string;
@@ -21,11 +20,10 @@ interface Notification {
 }
 
 const Header = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [notifications] = useState<Notification[]>([]);
+  const [unreadCount] = useState(0);
 
-  // Mock user data - in a real app, this would come from your auth context or API
+  // Mock user data
   const userData = {
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -33,147 +31,7 @@ const Header = () => {
     joinedDate: 'January 2024'
   };
 
-  const navigate = useNavigate();
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Check authentication status
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/auth');
-        return;
-      }
-      setUserId(session.user.id);
-    };
-
-    checkAuth();
-
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        navigate('/auth');
-      } else if (session) {
-        setUserId(session.user.id);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!userId) return;
-
-    // Fetch initial notifications
-    fetchNotifications();
-
-    // Subscribe to real-time notifications
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`
-        },
-        (payload) => {
-          console.log('Real-time notification update:', payload);
-          fetchNotifications();
-          
-          // Show toast for new notifications
-          if (payload.eventType === 'INSERT') {
-            const notification = payload.new as Notification;
-            toast({
-              title: notification.title,
-              description: notification.message,
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    // Cleanup subscription
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId]);
-
-  const fetchNotifications = async () => {
-    if (!userId) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-
-      setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.is_read).length || 0);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-      toast({
-        title: "Error fetching notifications",
-        description: "There was a problem loading your notifications.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const markAsRead = async (notificationId: string) => {
-    if (!userId) return;
-
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId)
-        .eq('user_id', userId);
-
-      if (error) throw error;
-
-      // Update local state
-      setNotifications(notifications.map(notification => 
-        notification.id === notificationId 
-          ? { ...notification, is_read: true }
-          : notification
-      ));
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-      toast({
-        title: "Error updating notification",
-        description: "There was a problem marking the notification as read.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account",
-      });
-      navigate('/auth');
-    } catch (error) {
-      console.error('Error logging out:', error);
-      toast({
-        title: "Error logging out",
-        description: "There was a problem logging out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -201,21 +59,6 @@ const Header = () => {
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {notifications.map((notification) => (
-              <DropdownMenuItem 
-                key={notification.id} 
-                className={`cursor-pointer p-4 ${!notification.is_read ? 'bg-neutral-50' : ''}`}
-                onClick={() => markAsRead(notification.id)}
-              >
-                <div className="w-full">
-                  <div className="font-medium">{notification.title}</div>
-                  <div className="text-sm text-neutral-600">{notification.message}</div>
-                  <div className="text-xs text-neutral-500 mt-1">
-                    {formatDate(notification.created_at)}
-                  </div>
-                </div>
-              </DropdownMenuItem>
-            ))}
             {notifications.length === 0 && (
               <DropdownMenuItem className="text-center p-4 text-neutral-600">
                 No new notifications
@@ -250,11 +93,6 @@ const Header = () => {
                 </div>
               </div>
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

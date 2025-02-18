@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 import Header from "../components/layout/Header";
 import { Button } from "@/components/ui/button";
@@ -18,10 +17,8 @@ import {
 import { NewCaseDialog } from "@/components/cases/NewCaseDialog";
 import { Case } from "@/types/case";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { supabase } from "@/integrations/supabase/client";
 
 const Cases = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewCaseDialog, setShowNewCaseDialog] = useState(false);
@@ -30,62 +27,29 @@ const Cases = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    checkAuth();
-    fetchCases();
+    // Load cases from localStorage
+    const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
+    setCases(storedCases);
+    setIsLoading(false);
   }, []);
-
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate('/auth');
-    }
-  };
-
-  const fetchCases = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { data: casesData, error: casesError } = await supabase
-        .from('cases')
-        .select(`
-          *,
-          hearings (*)
-        `)
-        .order('created_at', { ascending: false });
-
-      if (casesError) throw casesError;
-
-      setCases(casesData || []);
-    } catch (error) {
-      console.error('Error fetching cases:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load cases. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleAddCase = async (newCase: Omit<Case, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'hearings'>) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/auth');
-        return;
-      }
+      const caseToAdd = {
+        ...newCase,
+        id: crypto.randomUUID(),
+        user_id: 'demo-user',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        hearings: []
+      };
 
-      const { data, error } = await supabase
-        .from('cases')
-        .insert([{ ...newCase, user_id: session.user.id }])
-        .select()
-        .single();
+      setCases(prevCases => [caseToAdd, ...prevCases]);
+      
+      // Save to localStorage
+      const updatedCases = [caseToAdd, ...cases];
+      localStorage.setItem('cases', JSON.stringify(updatedCases));
 
-      if (error) throw error;
-
-      setCases([{ ...data, hearings: [] }, ...cases]);
       toast({
         title: "Success",
         description: "New case has been registered successfully",
@@ -98,10 +62,6 @@ const Cases = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const handleCaseClick = (caseData: Case) => {
-    navigate(`/cases/${caseData.id}`);
   };
 
   const filteredCases = cases.filter(
@@ -174,7 +134,6 @@ const Cases = () => {
                     <TableRow 
                       key={case_.id}
                       className="cursor-pointer hover:bg-white/50 transition-colors"
-                      onClick={() => handleCaseClick(case_)}
                     >
                       <TableCell className="font-medium">{case_.party_name}</TableCell>
                       <TableCell>{case_.case_number}</TableCell>

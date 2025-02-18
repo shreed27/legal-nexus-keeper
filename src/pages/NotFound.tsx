@@ -1,5 +1,5 @@
 
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const NotFound = () => {
@@ -11,11 +11,6 @@ const NotFound = () => {
       location.pathname
     );
   }, [location.pathname]);
-
-  // Redirect to dashboard if coming from /auth route
-  if (location.pathname === "/auth") {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
