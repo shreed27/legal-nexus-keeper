@@ -54,7 +54,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div
+    <aside
       className={`fixed left-0 top-0 h-full bg-white/90 backdrop-blur-xl border-r border-neutral-200/50 text-neutral-600 transition-all duration-300 
         ${collapsed ? 'w-20' : 'w-64'} z-50`}
     >
@@ -90,7 +90,6 @@ const Sidebar = () => {
           <Link
             key={item.path}
             to={item.path}
-            onClick={() => isMobile && setIsOpen(false)}
             className={`flex items-center px-6 py-4 transition-colors hover:bg-neutral-100 ${
               location.pathname === item.path ? 'bg-primary/10 border-r-4 border-primary' : ''
             }`}
@@ -100,7 +99,7 @@ const Sidebar = () => {
           </Link>
         ))}
       </nav>
-    </div>
+    </aside>
   );
 };
 
