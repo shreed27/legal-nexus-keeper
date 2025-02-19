@@ -31,50 +31,74 @@
 @layer base {
   * {
     @apply border-border selection:bg-primary/20;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-white via-blue-50 to-white text-neutral-700 antialiased;
     scroll-behavior: smooth;
   }
-  body {
-    @apply bg-gradient-to-br from-white via-blue-50 to-white text-neutral-700 antialiased min-h-screen;
+
+  h1 {
+    @apply text-3xl font-bold text-neutral-900;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold text-neutral-900;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-neutral-900;
   }
 }
 
-.glass-card {
-  @apply bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg hover:bg-white/95 transition-colors duration-300;
-}
+@layer components {
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
 
-.hover-scale {
-  @apply transition-transform duration-300 hover:scale-105;
+  .page-header {
+    @apply mb-8;
+  }
+
+  .page-title {
+    @apply text-3xl font-bold text-neutral-900 mb-2;
+  }
+
+  .page-description {
+    @apply text-neutral-600;
+  }
+
+  .card-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .glass-card {
+    @apply bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  .input-with-icon {
+    @apply pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300;
+  }
+
+  .button-primary {
+    @apply bg-primary hover:bg-primary/90 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-300;
+  }
+
+  .button-secondary {
+    @apply bg-white hover:bg-gray-50 text-neutral-700 font-medium px-4 py-2 rounded-lg border border-gray-200 transition-colors duration-300;
+  }
 }
 
 .fade-in {
-  opacity: 0;
-  animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-.gradient-text {
-  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
-}
-
-.glow {
-  @apply relative;
-}
-
-.glow::before {
-  @apply content-[''] absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-xl opacity-75 -z-10;
-}
-
-.gradient-border {
-  @apply relative before:absolute before:inset-0 before:-z-10 before:p-[1px] before:bg-gradient-to-r before:from-primary before:to-accent before:rounded-xl;
-}
-
-.gradient-bg {
-  @apply bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5;
-}
-
-.neon-glow {
-  @apply relative;
-  box-shadow: 0 0 20px theme('colors.primary.DEFAULT'),
-              0 0 40px theme('colors.accent.DEFAULT');
+.slide-in {
+  animation: slideIn 0.3s ease-out forwards;
 }
 
 @keyframes fadeIn {
@@ -88,10 +112,51 @@
   }
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Smooth scrolling */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Glass morphism effects */
 .glass-morphism {
   @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
 }
 
+/* Transitions */
 .smooth-transition {
   @apply transition-all duration-300 ease-in-out;
+}
+
+/* Page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 300ms, transform 300ms;
 }
