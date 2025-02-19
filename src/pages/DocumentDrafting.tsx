@@ -5,6 +5,7 @@ import TemplateGallery from "@/components/document-drafting/TemplateGallery";
 import DocumentGenerator from "@/components/document-drafting/DocumentGenerator";
 import RecentDocuments from "@/components/document-drafting/RecentDocuments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileEdit } from "lucide-react";
 
 const DocumentDrafting = () => {
   const [activeTab, setActiveTab] = useState("templates");
@@ -19,10 +20,15 @@ const DocumentDrafting = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Document Drafting</h1>
-        <p className="text-gray-600">Create and edit legal documents with AI assistance</p>
+    <div className="fade-in">
+      <div className="page-header">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <FileEdit className="h-6 w-6 text-primary" />
+          </div>
+          <h1 className="page-title">Document Drafting</h1>
+        </div>
+        <p className="page-description">Create and edit legal documents with AI assistance</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">

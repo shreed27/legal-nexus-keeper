@@ -86,10 +86,10 @@ const DocumentPreview = ({ content }: DocumentPreviewProps) => {
         <Textarea
           value={editableContent}
           onChange={(e) => setEditableContent(e.target.value)}
-          className="min-h-[400px] font-mono"
+          className="min-h-[400px] font-mono glass-card"
         />
       ) : (
-        <div className="bg-neutral-50 p-4 rounded-lg min-h-[400px] whitespace-pre-wrap font-mono">
+        <div className="bg-neutral-50 p-4 rounded-lg min-h-[400px] whitespace-pre-wrap font-mono glass-card">
           {editableContent}
         </div>
       )}

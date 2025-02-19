@@ -1,8 +1,6 @@
 
 import { Scale, Briefcase, Clock, Calendar } from 'lucide-react';
 import StatCard from '../components/dashboard/StatCard';
-import Sidebar from '../components/layout/Sidebar';
-import Header from '../components/layout/Header';
 import { useEffect, useState } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -62,14 +60,19 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      <Sidebar />
-      <Header />
-      
       <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'ml-64 px-8'} pt-20`}>
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold text-neutral-dark mb-6 md:mb-8 animate-fade-in gradient-text">
-            Dashboard Overview
-          </h1>
+          <div className="page-header">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Scale className="h-6 w-6 text-primary" />
+              </div>
+              <h1 className="page-title">
+                Dashboard Overview
+              </h1>
+            </div>
+            <p className="page-description">Monitor your legal practice performance and activity</p>
+          </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 md:mb-8">
             {stats.map((stat, index) => (
