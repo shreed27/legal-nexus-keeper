@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Download, Edit, Eye, Save, Share2 } from "lucide-react";
+import { Download, Edit, Eye, Save, Share2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +36,14 @@ const DocumentPreview = ({ content }: DocumentPreviewProps) => {
     });
     setIsEditing(false);
   };
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(editableContent);
+    toast({
+      title: "Copied to Clipboard",
+      description: "Document content has been copied to clipboard.",
+    });
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -58,25 +66,49 @@ const DocumentPreview = ({ content }: DocumentPreviewProps) => {
   };
 
   return (
-    <div className="mt-6 space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Generated Document</h3>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
+    <div className="mt-6 space-y-4 fade-in">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h3 className="text-lg font-medium gradient-text">Generated Document</h3>
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => setIsEditing(!isEditing)}
+            className="bg-white/80 hover:bg-white"
+          >
             {isEditing ? <Eye className="w-4 h-4 mr-2" /> : <Edit className="w-4 h-4 mr-2" />}
             {isEditing ? "Preview" : "Edit"}
           </Button>
           {isEditing && (
-            <Button variant="outline" onClick={handleSave}>
+            <Button 
+              variant="outline" 
+              onClick={handleSave}
+              className="bg-white/80 hover:bg-white"
+            >
               <Save className="w-4 h-4 mr-2" />
               Save
             </Button>
           )}
-          <Button variant="outline" onClick={handleDownload}>
+          <Button 
+            variant="outline" 
+            onClick={handleCopy}
+            className="bg-white/80 hover:bg-white"
+          >
+            <Copy className="w-4 h-4 mr-2" />
+            Copy
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={handleDownload}
+            className="bg-white/80 hover:bg-white"
+          >
             <Download className="w-4 h-4 mr-2" />
             Download
           </Button>
-          <Button variant="outline" onClick={handleShare}>
+          <Button 
+            variant="outline" 
+            onClick={handleShare}
+            className="bg-white/80 hover:bg-white"
+          >
             <Share2 className="w-4 h-4 mr-2" />
             Share
           </Button>
@@ -86,10 +118,10 @@ const DocumentPreview = ({ content }: DocumentPreviewProps) => {
         <Textarea
           value={editableContent}
           onChange={(e) => setEditableContent(e.target.value)}
-          className="min-h-[400px] font-mono glass-card"
+          className="min-h-[400px] font-mono glass-card p-6"
         />
       ) : (
-        <div className="bg-neutral-50 p-4 rounded-lg min-h-[400px] whitespace-pre-wrap font-mono glass-card">
+        <div className="glass-card p-6 rounded-xl min-h-[400px] whitespace-pre-wrap font-mono shadow-lg">
           {editableContent}
         </div>
       )}

@@ -53,7 +53,7 @@
 
 @layer components {
   .page-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
   }
 
   .page-header {
@@ -61,7 +61,7 @@
   }
 
   .page-title {
-    @apply text-3xl font-bold text-neutral-900 mb-2;
+    @apply text-3xl font-bold text-neutral-900 mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
 
   .page-description {
@@ -73,7 +73,7 @@
   }
 
   .glass-card {
-    @apply bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl;
   }
 
   .hover-scale {
@@ -91,14 +91,30 @@
   .button-secondary {
     @apply bg-white hover:bg-gray-50 text-neutral-700 font-medium px-4 py-2 rounded-lg border border-gray-200 transition-colors duration-300;
   }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
+  }
+  
+  .futuristic-border {
+    @apply border border-white/60 relative overflow-hidden after:absolute after:inset-0 after:bg-gradient-to-r after:from-primary/30 after:via-transparent after:to-accent/30 after:animate-glow;
+  }
+  
+  .panel-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+  }
+  
+  .stat-panel {
+    @apply glass-card p-6 hover:border-primary/50 transition-all;
+  }
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
 .slide-in {
-  animation: slideIn 0.3s ease-out forwards;
+  animation: slideIn 0.4s ease-out forwards;
 }
 
 @keyframes fadeIn {
@@ -160,3 +176,38 @@
   transform: translateY(10px);
   transition: opacity 300ms, transform 300ms;
 }
+
+/* Glow effect animation */
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-glow {
+  animation: glow 3s infinite ease-in-out;
+}
+
+/* Futuristic scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(30, 174, 219, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(30, 174, 219, 0.5);
+}
+
+/* Remove App.css styles as they'll be merged here */

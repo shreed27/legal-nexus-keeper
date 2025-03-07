@@ -5,7 +5,7 @@ import TemplateGallery from "@/components/document-drafting/TemplateGallery";
 import DocumentGenerator from "@/components/document-drafting/DocumentGenerator";
 import RecentDocuments from "@/components/document-drafting/RecentDocuments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileEdit } from "lucide-react";
+import { FileEdit, Template, FileText } from "lucide-react";
 
 const DocumentDrafting = () => {
   const [activeTab, setActiveTab] = useState("templates");
@@ -20,10 +20,10 @@ const DocumentDrafting = () => {
   };
 
   return (
-    <div className="fade-in">
+    <div className="page-container fade-in">
       <div className="page-header">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-primary/10 rounded-lg">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-3 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl shadow-md">
             <FileEdit className="h-6 w-6 text-primary" />
           </div>
           <h1 className="page-title">Document Drafting</h1>
@@ -31,18 +31,34 @@ const DocumentDrafting = () => {
         <p className="page-description">Create and edit legal documents with AI assistance</p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-        <TabsList>
-          <TabsTrigger value="templates">Templates</TabsTrigger>
-          <TabsTrigger value="generate">Generate</TabsTrigger>
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab} 
+        className="space-y-8"
+      >
+        <TabsList className="bg-white/50 p-1 rounded-lg border border-white/60 shadow-md">
+          <TabsTrigger 
+            value="templates"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-primary"
+          >
+            <Template className="w-4 h-4 mr-2" />
+            Templates
+          </TabsTrigger>
+          <TabsTrigger 
+            value="generate"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-primary"
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            Generate
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="templates" className="space-y-8">
+        <TabsContent value="templates" className="space-y-8 animate-fade-in">
           <TemplateGallery onSelectTemplate={handleTemplateSelect} />
           <RecentDocuments />
         </TabsContent>
 
-        <TabsContent value="generate">
+        <TabsContent value="generate" className="animate-fade-in">
           <DocumentGenerator />
         </TabsContent>
       </Tabs>
