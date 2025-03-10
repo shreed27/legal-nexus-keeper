@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, LineChart, Star, Users, ExternalLink } from "lucide-react";
@@ -194,7 +193,7 @@ const Landing = () => {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
             <div className="flex flex-col md:flex-row items-center justify-between">
-              <p className="text-gray-600 text-center">© 2024 Avenix.Pro. All rights reserved.</p>
+              <p className="text-gray-600 text-center">© 2024 AVENIX.PRO. All rights reserved.</p>
               <div className="flex gap-4 mt-4 md:mt-0">
                 <a href="#" className="text-primary hover:text-primary-dark">Twitter</a>
                 <a href="#" className="text-primary hover:text-primary-dark">LinkedIn</a>
