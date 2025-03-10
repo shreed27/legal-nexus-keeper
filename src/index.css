@@ -76,6 +76,20 @@
     @apply bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl;
   }
 
+  .futuristic-card {
+    @apply bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-xl border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl relative overflow-hidden;
+  }
+  
+  .futuristic-card::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-secondary/5 opacity-50;
+  }
+  
+  .futuristic-card::after {
+    content: "";
+    @apply absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary via-accent to-transparent opacity-70;
+  }
+
   .hover-scale {
     @apply transition-transform duration-300 hover:scale-105;
   }
@@ -96,6 +110,10 @@
     @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
   }
   
+  .futuristic-text {
+    @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent font-bold;
+  }
+  
   .futuristic-border {
     @apply border border-white/60 relative overflow-hidden after:absolute after:inset-0 after:bg-gradient-to-r after:from-primary/30 after:via-transparent after:to-accent/30 after:animate-glow;
   }
@@ -105,7 +123,23 @@
   }
   
   .stat-panel {
-    @apply glass-card p-6 hover:border-primary/50 transition-all;
+    @apply futuristic-card p-6 hover:border-primary/50 transition-all;
+  }
+  
+  .shimmer {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:animate-shimmer;
+  }
+  
+  .neon-border {
+    @apply border border-primary/40 shadow-neon;
+  }
+  
+  .neon-accent-border {
+    @apply border border-accent/40 shadow-neon-accent;
+  }
+  
+  .floating-element {
+    @apply animate-float;
   }
 }
 
@@ -149,6 +183,11 @@
   @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl;
 }
 
+/* Enhanced glass morphism for futuristic look */
+.neo-glass {
+  @apply bg-gradient-to-br from-white/80 via-white/50 to-white/30 backdrop-blur-xl border border-white/30 shadow-lg;
+}
+
 /* Transitions */
 .smooth-transition {
   @apply transition-all duration-300 ease-in-out;
@@ -187,6 +226,36 @@
   }
 }
 
+/* Futuristic pulsing border */
+.pulse-border {
+  position: relative;
+}
+
+.pulse-border::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: inherit;
+  border: 2px solid transparent;
+  background: linear-gradient(90deg, var(--primary), var(--accent)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderPulse 3s infinite;
+}
+
+@keyframes borderPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
 .animate-glow {
   animation: glow 3s infinite ease-in-out;
 }
@@ -208,6 +277,22 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(30, 174, 219, 0.5);
+}
+
+/* Loading animations */
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Remove App.css styles as they'll be merged here */

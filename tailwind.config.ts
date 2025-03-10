@@ -40,9 +40,9 @@ export default {
           dark: "#1A1F2C",
         },
         accent: {
-          DEFAULT: "#1EAEDB",
-          light: "#33C3F0",
-          dark: "#0E9CC9",
+          DEFAULT: "#7E69AB", // Royal purple for futuristic look
+          light: "#9b87f5",
+          dark: "#6E59A5",
         },
       },
       borderRadius: {
@@ -71,6 +71,22 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        pulse: {
+          "0%, 100%": { opacity: "0.8" },
+          "50%": { opacity: "0.4" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-1000px 0" },
+          "100%": { backgroundPosition: "1000px 0" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -78,7 +94,15 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-in": "slide-in 0.5s ease-out",
         glow: "glow 2s ease-in-out infinite",
+        pulse: "pulse 3s infinite ease-in-out",
+        "shimmer": "shimmer 2s infinite linear",
+        float: "float 4s ease-in-out infinite",
+        "scale-in": "scale-in 0.5s ease-out",
       },
+      boxShadow: {
+        'neon': '0 0 5px theme(colors.primary.light), 0 0 20px theme(colors.primary.light)',
+        'neon-accent': '0 0 5px theme(colors.accent.light), 0 0 20px theme(colors.accent.light)',
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
