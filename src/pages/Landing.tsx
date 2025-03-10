@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, LineChart, Star, Users } from "lucide-react";
+import { ArrowRight, Check, LineChart, Star, Users, ExternalLink } from "lucide-react";
 
 const Navbar = () => (
   <nav className="fixed w-full bg-white/80 backdrop-blur-sm border-b border-gray-200/80 z-50">
@@ -9,7 +9,7 @@ const Navbar = () => (
       <div className="flex items-center justify-between h-16">
         <div className="flex items-center gap-2">
           <img src="/lovable-uploads/e9bf099f-9fa9-4c93-963c-44cd8f6fd504.png" alt="Logo" className="h-8" />
-          <span className="text-xl font-bold">AVENIX.PRO</span>
+          <span className="text-xl font-bold gradient-text">AVENIX.PRO</span>
         </div>
         <div className="hidden md:flex items-center gap-8">
           <button className="text-gray-600 hover:text-gray-900">Product</button>
@@ -18,11 +18,11 @@ const Navbar = () => (
           <button className="text-gray-600 hover:text-gray-900">Integrations</button>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="outline" asChild>
-            <Link to="/login">Login</Link>
-          </Button>
-          <Button className="bg-black text-white hover:bg-black/90" asChild>
-            <Link to="/dashboard">Start for free</Link>
+          <Button className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white" asChild>
+            <Link to="/dashboard">
+              <span>Get Started</span>
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </div>
@@ -38,8 +38,8 @@ const Stats = () => (
       { number: "+2.4", label: "NPS improvement" },
       { number: "100k+", label: "unique insights generated" },
     ].map((stat, i) => (
-      <div key={i} className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-        <div className="text-4xl font-bold mb-2">{stat.number}</div>
+      <div key={i} className="neo-glass p-6 hover:shadow-neon transition-all duration-300 group hover:scale-105">
+        <div className="text-4xl font-bold mb-2 gradient-text">{stat.number}</div>
         <p className="text-gray-600">{stat.label}</p>
       </div>
     ))}
@@ -47,9 +47,9 @@ const Stats = () => (
 );
 
 const Testimonials = () => (
-  <div className="bg-gray-50 py-20">
+  <div className="bg-gradient-to-br from-neutral-50 to-blue-50 py-20">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-bold text-center mb-12">Trusted by Legal Teams Worldwide</h2>
+      <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Trusted by Legal Teams Worldwide</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {[
           {
@@ -68,7 +68,7 @@ const Testimonials = () => (
             content: "The integration was seamless, and the results were immediate. Highly recommend for any legal team."
           }
         ].map((testimonial, i) => (
-          <div key={i} className="bg-white p-6 rounded-xl shadow-lg">
+          <div key={i} className="neo-glass p-6 hover:shadow-neon-accent transition-all duration-300">
             <p className="text-gray-600 mb-4">{testimonial.content}</p>
             <div>
               <p className="font-semibold">{testimonial.name}</p>
@@ -83,7 +83,7 @@ const Testimonials = () => (
 
 const Features = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-    <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
+    <h2 className="text-3xl font-bold text-center mb-12 gradient-text">Key Features</h2>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {[
         {
@@ -102,8 +102,10 @@ const Features = () => (
           description: "Automate repetitive tasks and focus on what matters"
         }
       ].map((feature, i) => (
-        <div key={i} className="p-6 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
-          <feature.icon className="h-8 w-8 text-primary mb-4" />
+        <div key={i} className="p-6 neo-glass hover:shadow-neon transition-all duration-300 group">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 mb-4 group-hover:from-primary/30 group-hover:to-accent/30 transition-all">
+            <feature.icon className="h-6 w-6 text-primary" />
+          </div>
           <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
           <p className="text-gray-600">{feature.description}</p>
         </div>
@@ -121,22 +123,28 @@ const Landing = () => {
         {/* Hero Section */}
         <div className="pt-32 pb-20 text-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-blue-50 text-blue-600 rounded-full px-4 py-1 inline-flex items-center text-sm mb-8">
+            <div className="bg-gradient-to-r from-primary/20 to-accent/20 text-primary rounded-full px-4 py-1 inline-flex items-center text-sm mb-8 animate-pulse">
               New: AI-Powered Legal Analytics
               <ArrowRight className="ml-2 h-4 w-4" />
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 gradient-text animate-fade-in">
               Transform Your Legal Practice
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-12 animate-fade-in" style={{ animationDelay: "0.2s" }}>
               Streamline your legal workflow with AI-powered tools and insights. Save time, reduce errors, and focus on what matters most.
             </p>
-            <div className="flex items-center justify-center gap-4">
-              <Button size="lg" className="bg-black text-white hover:bg-black/90" asChild>
-                <Link to="/dashboard">Start for free</Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+              <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white w-full sm:w-auto" asChild>
+                <Link to="/dashboard">
+                  <span>Start for free</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/demo">Book a demo</Link>
+              <Button size="lg" variant="outline" className="group w-full sm:w-auto" asChild>
+                <Link to="/demo">
+                  <span>Book a demo</span>
+                  <ExternalLink className="ml-2 h-4 w-4 group-hover:animate-pulse" />
+                </Link>
               </Button>
             </div>
           </div>
@@ -148,7 +156,7 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200">
+      <footer className="bg-gradient-to-br from-white to-blue-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
@@ -185,7 +193,14 @@ const Landing = () => {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
-            <p className="text-gray-600 text-center">© 2024 Avenix.Pro. All rights reserved.</p>
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <p className="text-gray-600 text-center">© 2024 Avenix.Pro. All rights reserved.</p>
+              <div className="flex gap-4 mt-4 md:mt-0">
+                <a href="#" className="text-primary hover:text-primary-dark">Twitter</a>
+                <a href="#" className="text-primary hover:text-primary-dark">LinkedIn</a>
+                <a href="#" className="text-primary hover:text-primary-dark">GitHub</a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

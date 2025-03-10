@@ -1,6 +1,7 @@
 
-import { Bell, User } from 'lucide-react';
-import { useState } from 'react';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Bell, User, Settings, LogOut, Wifi, WifiOff } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,103 +10,169 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  created_at: string;
-  is_read: boolean;
+interface HeaderProps {
+  isOnline?: boolean;
 }
 
-const Header = () => {
-  const [notifications] = useState<Notification[]>([]);
-  const [unreadCount] = useState(0);
+const Header = ({ isOnline = true }: HeaderProps) => {
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: "New hearing scheduled",
+      description: "Smith v. Johnson case hearing on 10/15/2024",
+      time: "2 hours ago",
+      read: false,
+    },
+    {
+      id: 2,
+      title: "Document ready for review",
+      description: "Legal brief for Williams v. Tech Corp is ready",
+      time: "1 day ago",
+      read: false,
+    },
+    {
+      id: 3,
+      title: "Compliance alert",
+      description: "New GDPR regulations affecting your documents",
+      time: "3 days ago",
+      read: true,
+    },
+  ]);
 
-  // Mock user data
-  const userData = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'Attorney',
-    joinedDate: 'January 2024'
-  };
+  const isMobile = useIsMobile();
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const { toast } = useToast();
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours} hours ago`;
-    if (diffInHours < 48) return 'Yesterday';
-    return `${Math.floor(diffInHours / 24)} days ago`;
+  const markAllAsRead = () => {
+    setNotifications(notifications.map((n) => ({ ...n, read: true })));
   };
 
   return (
-    <header className="fixed top-0 right-0 h-20 flex items-center justify-end px-8 bg-white/80 backdrop-blur-md border-b border-neutral-200/50 z-40 animate-fade-in ml-0 md:ml-64 w-full md:w-[calc(100%-16rem)]">
-      <div className="flex items-center space-x-6">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="relative p-2 rounded-full bg-white/80 hover:bg-neutral-100 transition-colors shadow-sm">
-              <Bell size={20} className="text-neutral-600" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-              )}
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 bg-white/95 backdrop-blur-md border border-white/60">
-            <DropdownMenuLabel className="text-primary">Notifications</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {notifications.length === 0 && (
-              <div className="text-center p-6 text-neutral-600">
-                <Bell className="w-10 h-10 text-neutral-400 mx-auto mb-2" />
-                <p className="font-medium">No new notifications</p>
-                <p className="text-sm text-neutral-500">You're all caught up!</p>
-              </div>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <header className="fixed top-0 right-0 left-0 bg-white/80 backdrop-blur-xl border-b border-neutral-200/50 z-30 transition-all duration-300">
+      <div
+        className={`flex h-20 items-center justify-between px-4 md:px-8 transition-all ${
+          isMobile ? "ml-0" : "ml-64"
+        }`}
+      >
+        <div>
+          {/* Search or Breadcrumbs could go here */}
+        </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center space-x-3 p-2 rounded-full bg-white/80 hover:bg-neutral-100 transition-colors shadow-sm">
-              <User size={20} className="text-neutral-600" />
-              <span className="font-medium text-neutral-700">{userData.name}</span>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-72 bg-white/95 backdrop-blur-md border border-white/60">
-            <DropdownMenuLabel className="text-primary">My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="px-4 py-3">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                    <User className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-neutral-900">{userData.name}</p>
-                    <p className="text-sm text-neutral-600">{userData.email}</p>
-                  </div>
+        <div className="flex items-center space-x-4">
+          {/* Online/Offline Indicator */}
+          <div className={`hidden md:flex items-center ${isOnline ? 'text-green-500' : 'text-amber-500'} gap-1.5`}>
+            {isOnline ? (
+              <>
+                <Wifi size={16} />
+                <span className="text-sm">Online</span>
+              </>
+            ) : (
+              <>
+                <WifiOff size={16} />
+                <span className="text-sm">Offline</span>
+              </>
+            )}
+          </div>
+
+          {/* Notifications */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative hover:bg-neutral-100 transition-colors"
+              >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuLabel className="flex items-center justify-between">
+                <span>Notifications</span>
+                {unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    className="text-xs h-auto p-1"
+                    onClick={markAllAsRead}
+                  >
+                    Mark all as read
+                  </Button>
+                )}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {notifications.length === 0 ? (
+                <div className="py-4 px-2 text-center text-muted-foreground">
+                  No notifications
                 </div>
-                <div className="space-y-1 pt-2 border-t border-neutral-100">
-                  <p className="text-xs text-neutral-500">Role</p>
-                  <p className="text-sm text-neutral-700 font-medium">{userData.role}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs text-neutral-500">Member since</p>
-                  <p className="text-sm text-neutral-700 font-medium">{userData.joinedDate}</p>
-                </div>
-              </div>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer text-red-500 font-medium">
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              ) : (
+                notifications.map((notification) => (
+                  <DropdownMenuItem
+                    key={notification.id}
+                    className={`flex flex-col items-start py-2 ${
+                      !notification.read ? "bg-blue-50/50" : ""
+                    }`}
+                  >
+                    <div className="font-medium">{notification.title}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {notification.description}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {notification.time}
+                    </div>
+                  </DropdownMenuItem>
+                ))
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/notifications" className="w-full text-center text-sm font-medium">
+                  View all
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* User menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full"
+              >
+                <Avatar className="h-10 w-10 border-2 border-white">
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
+                    JD
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>John Doe</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </header>
   );
