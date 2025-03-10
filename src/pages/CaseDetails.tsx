@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -40,14 +39,16 @@ const CaseDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [newHearing, setNewHearing] = useState<Hearing>({
-    date: "",
-    summary: "",
-    stage: "",
+    id: '',
+    case_id: '',
+    date: '',
+    summary: '',
+    stage: '',
     amount: 0,
+    created_at: ''
   });
 
   useEffect(() => {
-    // Add a small delay to simulate loading for a smoother experience
     const timer = setTimeout(() => {
       const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
       const currentCase = storedCases.find((c: any) => c.id === id);
@@ -63,7 +64,7 @@ const CaseDetails = () => {
   }, [id, navigate]);
 
   const handleAddHearing = () => {
-    if (!newHearing.date || !newHearing.summary || !newHearing.stage || !newHearing.amount) {
+    if (!newHearing.date || !newHearing.summary || !newHearing.stage) {
       toast({
         title: "Error",
         description: "Please fill all hearing details",
@@ -72,9 +73,16 @@ const CaseDetails = () => {
       return;
     }
 
+    const hearingToAdd: Hearing = {
+      ...newHearing,
+      id: crypto.randomUUID(),
+      case_id: id || '',
+      created_at: new Date().toISOString()
+    };
+
     const updatedCase = {
       ...caseData,
-      hearings: [...(caseData.hearings || []), newHearing],
+      hearings: [...(caseData.hearings || []), hearingToAdd],
     };
 
     const storedCases = JSON.parse(localStorage.getItem('cases') || '[]');
@@ -85,11 +93,15 @@ const CaseDetails = () => {
     localStorage.setItem('cases', JSON.stringify(updatedCases));
     setCaseData(updatedCase);
     setNewHearing({
-      date: "",
-      summary: "",
-      stage: "",
+      id: '',
+      case_id: '',
+      date: '',
+      summary: '',
+      stage: '',
       amount: 0,
+      created_at: ''
     });
+    
     toast({
       title: "Success",
       description: "Hearing details added successfully",
@@ -135,7 +147,6 @@ const CaseDetails = () => {
     },
   };
 
-  // Generate some additional data for more visualizations
   const hearingsByStage = (caseData.hearings || []).reduce((acc: any, hearing: Hearing) => {
     acc[hearing.stage] = (acc[hearing.stage] || 0) + 1;
     return acc;
