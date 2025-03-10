@@ -22,13 +22,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-
-interface Hearing {
-  date: string;
-  summary: string;
-  stage: string;
-  amount: number;
-}
+import { Hearing } from "@/types/case";
 
 const CaseDetails = () => {
   const { id } = useParams();
@@ -38,14 +32,11 @@ const CaseDetails = () => {
   const [caseData, setCaseData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const [newHearing, setNewHearing] = useState<Hearing>({
-    id: '',
-    case_id: '',
+  const [newHearing, setNewHearing] = useState<Partial<Hearing>>({
     date: '',
     summary: '',
     stage: '',
-    amount: 0,
-    created_at: ''
+    amount: 0
   });
 
   useEffect(() => {
@@ -74,9 +65,12 @@ const CaseDetails = () => {
     }
 
     const hearingToAdd: Hearing = {
-      ...newHearing,
       id: crypto.randomUUID(),
       case_id: id || '',
+      date: newHearing.date || '',
+      summary: newHearing.summary || '',
+      stage: newHearing.stage || '',
+      amount: newHearing.amount || 0,
       created_at: new Date().toISOString()
     };
 
@@ -93,13 +87,10 @@ const CaseDetails = () => {
     localStorage.setItem('cases', JSON.stringify(updatedCases));
     setCaseData(updatedCase);
     setNewHearing({
-      id: '',
-      case_id: '',
       date: '',
       summary: '',
       stage: '',
-      amount: 0,
-      created_at: ''
+      amount: 0
     });
     
     toast({
@@ -414,7 +405,6 @@ const CaseDetails = () => {
                   
                   <div className="futuristic-card p-6">
                     <h2 className="text-xl font-semibold mb-4 futuristic-text">Related Cases</h2>
-                    {/* Would normally fetch related cases from API */}
                     <div className="text-center py-4 text-neutral-500">
                       <p>No related cases found</p>
                     </div>
@@ -556,3 +546,4 @@ const CaseDetails = () => {
 };
 
 export default CaseDetails;
+

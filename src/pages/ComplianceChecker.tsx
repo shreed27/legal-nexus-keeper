@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Shield, CheckCircle, AlertTriangle, FileCheck, Scale, Book, ChevronRight, RefreshCw, CheckSquare, XSquare, FileText, Database, Zap, BarChart4, Brain, GanttChartSquare, Lightbulb } from "lucide-react";
+import { Shield, CheckCircle, AlertTriangle, FileCheck, Scale, Book, ChevronRight, RefreshCw, CheckSquare, XSquare, FileText, Database, Zap, BarChart4, Brain, GanttChartSquare, Lightbulb, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -13,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 
-// Sample regulatory updates
 const SAMPLE_REGULATIONS = [
   {
     id: "reg-1",
@@ -49,7 +47,6 @@ const SAMPLE_REGULATIONS = [
   }
 ];
 
-// Sample compliance history data
 const COMPLIANCE_HISTORY = [
   {
     id: "check-1",
@@ -98,7 +95,6 @@ const COMPLIANCE_HISTORY = [
   }
 ];
 
-// Sample legal templates with compliance score
 const LEGAL_TEMPLATES = [
   {
     id: "template-1",
@@ -130,18 +126,28 @@ const LEGAL_TEMPLATES = [
   }
 ];
 
+type ClauseStatus = "good" | "warning" | "critical";
+
+interface RelevantClause {
+  section: string;
+  content: string;
+  status: ClauseStatus;
+}
+
+interface ComplianceResult {
+  passed: string[];
+  warnings: string[];
+  failed: string[];
+  score: number;
+  relevantClauses: RelevantClause[];
+  suggestedFixes: string[];
+  complianceScore: { category: string; score: number }[];
+}
+
 const ComplianceChecker = () => {
   const [text, setText] = useState("");
   const [progress, setProgress] = useState(0);
-  const [complianceResults, setComplianceResults] = useState<null | {
-    passed: string[];
-    warnings: string[];
-    failed: string[];
-    score: number;
-    relevantClauses: { section: string; content: string; status: "good" | "warning" | "critical" }[];
-    suggestedFixes: string[];
-    complianceScore: { category: string; score: number }[];
-  }>(null);
+  const [complianceResults, setComplianceResults] = useState<ComplianceResult | null>(null);
   const [jurisdictionType, setJurisdictionType] = useState("federal");
   const [documentType, setDocumentType] = useState("contract");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -205,7 +211,6 @@ const ComplianceChecker = () => {
   ];
 
   useEffect(() => {
-    // Simulate loading example data on first render
     if (!text) {
       setText("This Employment Agreement (\"Agreement\") is entered into as of [Date], by and between [Employer Name], with its principal place of business at [Address] (\"Employer\"), and [Employee Name], residing at [Address] (\"Employee\").\n\nWHEREAS, Employer desires to engage Employee to perform certain services for Employer, and Employee desires to perform such services, on the terms and conditions set forth in this Agreement.\n\nNOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, the parties agree as follows:");
     }
@@ -227,10 +232,8 @@ const ComplianceChecker = () => {
       description: "Analyzing your document with neural network algorithms...",
     });
 
-    // Reset previous results
     setComplianceResults(null);
     
-    // Simulate progress
     setProgress(0);
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -238,8 +241,7 @@ const ComplianceChecker = () => {
           clearInterval(interval);
           setIsAnalyzing(false);
           
-          // Generate more detailed simulated compliance results
-          const results = {
+          const results: ComplianceResult = {
             passed: [
               "Document structure requirements",
               "Required legal clauses",
@@ -259,22 +261,22 @@ const ComplianceChecker = () => {
               {
                 section: "Section 3.2: Data Protection",
                 content: "Company shall maintain appropriate safeguards...",
-                status: "warning"
+                status: "warning" as ClauseStatus
               },
               {
                 section: "Section 5.1: Termination",
                 content: "This agreement may be terminated by either party...",
-                status: "good"
+                status: "good" as ClauseStatus
               },
               {
                 section: "Section 7: Governing Law",
                 content: "This Agreement shall be governed by the laws of...",
-                status: "good"
+                status: "good" as ClauseStatus
               },
               {
                 section: "Section 9: Confidentiality",
                 content: "Employee agrees to maintain confidentiality...",
-                status: text.includes("confidentiality") ? "good" : "critical"
+                status: text.includes("confidentiality") ? "good" as ClauseStatus : "critical" as ClauseStatus
               }
             ],
             suggestedFixes: [
@@ -293,7 +295,6 @@ const ComplianceChecker = () => {
           
           setComplianceResults(results);
           
-          // Add this check to compliance history
           const newCheck = {
             id: `check-${complianceHistory.length + 1}`,
             title: documentType === "contract" ? "Employment Contract Review" : 
@@ -535,7 +536,6 @@ const ComplianceChecker = () => {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Passed Items */}
                   <Card className="bg-gradient-to-br from-green-50/80 to-white/80 border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-green-600 flex items-center text-lg">
@@ -555,7 +555,6 @@ const ComplianceChecker = () => {
                     </CardContent>
                   </Card>
                   
-                  {/* Warning Items */}
                   <Card className="bg-gradient-to-br from-yellow-50/80 to-white/80 border border-yellow-200 shadow-lg hover:shadow-xl transition-all duration-300">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-yellow-600 flex items-center text-lg">
@@ -575,7 +574,6 @@ const ComplianceChecker = () => {
                     </CardContent>
                   </Card>
                   
-                  {/* Failed Items */}
                   <Card className={`bg-gradient-to-br ${complianceResults.failed.length ? 'from-red-50/80 to-white/80 border border-red-200' : 'from-green-50/80 to-white/80 border border-green-200'} shadow-lg hover:shadow-xl transition-all duration-300`}>
                     <CardHeader className="pb-2">
                       <CardTitle className={`${complianceResults.failed.length ? 'text-red-600' : 'text-green-600'} flex items-center text-lg`}>
@@ -604,7 +602,6 @@ const ComplianceChecker = () => {
                   </Card>
                 </div>
 
-                {/* Clause Analysis */}
                 <Card className="bg-white/70 backdrop-blur-sm border-none shadow-lg">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center">
@@ -640,7 +637,6 @@ const ComplianceChecker = () => {
                   </CardContent>
                 </Card>
 
-                {/* AI Suggested Fixes */}
                 <Card className="bg-white/70 backdrop-blur-sm border-none shadow-lg">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center">
@@ -660,7 +656,6 @@ const ComplianceChecker = () => {
                   </CardContent>
                 </Card>
 
-                {/* Compliance Score Breakdown */}
                 <Card className="bg-white/70 backdrop-blur-sm border-none shadow-lg">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center">
