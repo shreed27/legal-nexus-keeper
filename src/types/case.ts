@@ -11,6 +11,10 @@ export interface Case {
   created_at: string;
   updated_at: string;
   hearings: Hearing[];
+  status?: string; // Added status property
+  filing_date?: string; // Added filing_date property
+  jurisdiction?: string; // Added jurisdiction as it seems to be used
+  case_type?: string; // Added case_type as it seems to be used
 }
 
 export interface Hearing {

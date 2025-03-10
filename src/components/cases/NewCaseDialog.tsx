@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,15 +19,25 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const newCaseSchema = z.object({
   party_name: z.string().min(1, "Party name is required"),
   court_name: z.string().min(1, "Court name is required"),
   case_number: z.string().min(1, "Case number is required"),
-  previous_date: z.string().min(1, "Previous date is required"),
-  next_date: z.string().min(1, "Next date is required"),
-  stage: z.string().min(1, "Stage is required"),
-  amount_charged: z.string().min(1, "Amount is required"),
+  previous_date: z.string().optional(),
+  next_date: z.string().optional(),
+  stage: z.string().optional(),
+  jurisdiction: z.string().optional(),
+  case_type: z.string().optional(),
+  status: z.string().default("active"),
+  amount_charged: z.string().optional(),
 });
 
 type NewCaseForm = z.infer<typeof newCaseSchema>;
@@ -48,6 +59,9 @@ export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogPr
       previous_date: "",
       next_date: "",
       stage: "",
+      jurisdiction: "",
+      case_type: "",
+      status: "active",
       amount_charged: "",
     },
   });
@@ -55,10 +69,10 @@ export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogPr
   const onSubmit = (data: NewCaseForm) => {
     try {
       const newCase = {
-        id: Date.now().toString(), // Generate a unique ID
         ...data,
-        amount_charged: parseFloat(data.amount_charged),
-        hearings_count: 1,
+        filing_date: new Date().toISOString(), // Add filing date
+        amount_charged: data.amount_charged ? parseFloat(data.amount_charged) : 0,
+        hearings: [],
       };
 
       onSuccess(newCase);
@@ -81,7 +95,7 @@ export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Add New Case</DialogTitle>
         </DialogHeader>
@@ -100,71 +114,148 @@ export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogPr
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="court_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Court Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter court name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="case_number"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Case Number</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter case number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="previous_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Previous Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="next_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Next Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="stage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Stage</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter case stage" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="court_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Court Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter court name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="case_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Case Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter case number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="jurisdiction"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Jurisdiction</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select jurisdiction" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Federal">Federal</SelectItem>
+                        <SelectItem value="State">State</SelectItem>
+                        <SelectItem value="Local">Local</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="case_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Case Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select case type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Civil">Civil</SelectItem>
+                        <SelectItem value="Criminal">Criminal</SelectItem>
+                        <SelectItem value="Family">Family</SelectItem>
+                        <SelectItem value="Corporate">Corporate</SelectItem>
+                        <SelectItem value="Employment">Employment</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="previous_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Previous Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="next_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Next Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="stage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stage</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter case stage" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="closed">Closed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="amount_charged"
@@ -178,7 +269,7 @@ export function NewCaseDialog({ open, onOpenChange, onSuccess }: NewCaseDialogPr
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90">
               Add Case
             </Button>
           </form>
