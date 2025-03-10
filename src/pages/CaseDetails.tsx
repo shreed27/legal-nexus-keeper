@@ -223,7 +223,7 @@ const CaseDetails = () => {
               <div className="glass-card p-6">
                 <h3 className="text-xl font-semibold mb-4">Financial Analysis</h3>
                 <div className="h-[300px]">
-                  <ChartContainer>
+                  <ChartContainer config={chartConfig}>
                     <BarChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" />
