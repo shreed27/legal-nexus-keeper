@@ -25,152 +25,220 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
 
-// Sample case results data
+// Sample Indian case results data
 const SAMPLE_CASES = [
   {
     id: "case-1",
-    title: "Smith v. Johnson",
-    citation: "598 F.3d 456",
-    court: "U.S. Supreme Court",
-    date: "2024-03-10",
-    summary: "Major case establishing new precedent for contract interpretation under federal law. The Court ruled that ambiguous terms should be interpreted in accordance with industry standards.",
+    title: "K.S. Puttaswamy v. Union of India",
+    citation: "(2017) 10 SCC 1",
+    court: "Supreme Court of India",
+    date: "2017-08-24",
+    summary: "Landmark judgment establishing the right to privacy as a fundamental right under the Indian Constitution. The Court held that privacy is intrinsic to freedom and liberty protected under Article 21.",
     relevance: 98,
-    jurisdiction: "Federal",
-    tags: ["Contract Law", "Statutory Interpretation", "Precedent"],
-    citedBy: 128
+    jurisdiction: "India",
+    tags: ["Constitutional Law", "Right to Privacy", "Fundamental Rights"],
+    citedBy: 245
   },
   {
     id: "case-2",
-    title: "United States v. GlobalTech Corp.",
-    citation: "823 F.2d 782",
-    court: "9th Circuit Court of Appeals",
-    date: "2023-11-05",
-    summary: "Corporate compliance case establishing standards for regulatory oversight in the technology sector. Significant implications for data privacy framework.",
-    relevance: 87,
-    jurisdiction: "Federal",
-    tags: ["Corporate Law", "Regulatory Compliance", "Technology"],
-    citedBy: 56
+    title: "Shreya Singhal v. Union of India",
+    citation: "(2015) 5 SCC 1",
+    court: "Supreme Court of India",
+    date: "2015-03-24",
+    summary: "Significant case concerning free speech on the internet. The Supreme Court struck down Section 66A of the Information Technology Act as unconstitutional and violative of Article 19(1)(a) of the Constitution.",
+    relevance: 92,
+    jurisdiction: "India",
+    tags: ["Information Technology", "Free Speech", "Constitutional Law"],
+    citedBy: 178
   },
   {
     id: "case-3",
-    title: "California Public Interest Group v. TechGiant Inc.",
-    citation: "89 Cal.App.5th 774",
-    court: "California Court of Appeal",
-    date: "2024-01-22",
-    summary: "Landmark state case concerning consumer protection in digital services and platforms. Establishes heightened duty of care for user data.",
-    relevance: 92,
-    jurisdiction: "State",
-    tags: ["Consumer Protection", "Digital Privacy", "State Law"],
-    citedBy: 42
+    title: "Navtej Singh Johar v. Union of India",
+    citation: "(2018) 10 SCC 1",
+    court: "Supreme Court of India",
+    date: "2018-09-06",
+    summary: "Historic judgment that decriminalized consensual sexual conduct between adults of the same sex by reading down Section 377 of the Indian Penal Code as unconstitutional to the extent it criminalized such conduct.",
+    relevance: 90,
+    jurisdiction: "India",
+    tags: ["Constitutional Law", "LGBTQ+ Rights", "Criminal Law"],
+    citedBy: 156
   },
   {
     id: "case-4",
-    title: "Harmon Group LLC v. Metropolitan Financial",
-    citation: "267 F.Supp.3d 982",
-    court: "U.S. District Court",
-    date: "2023-09-18",
-    summary: "Complex financial services case addressing fiduciary duties in investment advisory relationships and disclosure requirements in securities transactions.",
-    relevance: 78,
-    jurisdiction: "Federal",
-    tags: ["Financial Services", "Securities", "Fiduciary Duty"],
-    citedBy: 23
+    title: "Vishaka v. State of Rajasthan",
+    citation: "AIR 1997 SC 3011",
+    court: "Supreme Court of India",
+    date: "1997-08-13",
+    summary: "Groundbreaking case that established guidelines for prevention of sexual harassment at the workplace, later codified into the Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013.",
+    relevance: 87,
+    jurisdiction: "India",
+    tags: ["Labour Law", "Women's Rights", "Sexual Harassment"],
+    citedBy: 203
   },
   {
     id: "case-5",
-    title: "Martinez v. City of Westlake",
-    citation: "734 N.E.2d 1092",
-    court: "State Supreme Court",
-    date: "2023-08-04",
-    summary: "Municipal liability case establishing standards for government immunity in infrastructure maintenance. Created three-part test for municipal negligence claims.",
-    relevance: 73,
-    jurisdiction: "State",
-    tags: ["Municipal Law", "Government Immunity", "Negligence"],
-    citedBy: 31
+    title: "M.C. Mehta v. Union of India",
+    citation: "1987 SCR (1) 819",
+    court: "Supreme Court of India",
+    date: "1986-12-20",
+    summary: "Landmark environmental law case that established the principle of absolute liability for industries engaged in hazardous activities. Led to the development of environmental jurisprudence in India.",
+    relevance: 85,
+    jurisdiction: "India",
+    tags: ["Environmental Law", "Absolute Liability", "Public Interest Litigation"],
+    citedBy: 189
+  },
+  {
+    id: "case-6",
+    title: "State of West Bengal v. Anwar Ali Sarkar",
+    citation: "AIR 1952 SC 75",
+    court: "Supreme Court of India",
+    date: "1952-05-11",
+    summary: "Important case on the principle of equality before law. The Supreme Court struck down the West Bengal Special Courts Act, 1950 as violative of Article 14 of the Constitution.",
+    relevance: 82,
+    jurisdiction: "India",
+    tags: ["Constitutional Law", "Equality", "Article 14"],
+    citedBy: 137
+  },
+  {
+    id: "case-7",
+    title: "NALSA v. Union of India",
+    citation: "(2014) 5 SCC 438",
+    court: "Supreme Court of India",
+    date: "2014-04-15",
+    summary: "Progressive judgment recognizing transgender persons as a 'third gender' and affirming their fundamental rights under the Constitution of India.",
+    relevance: 84,
+    jurisdiction: "India",
+    tags: ["Constitutional Law", "Transgender Rights", "Gender Identity"],
+    citedBy: 128
   }
 ];
 
-// Sample statute results data
+// Sample Indian statute results data
 const SAMPLE_STATUTES = [
   {
     id: "stat-1",
-    title: "Federal Data Privacy Act of 2023",
-    citation: "15 U.S.C. §§ 6501-6506",
-    jurisdiction: "Federal",
-    enacted: "2023-05-15",
-    summary: "Comprehensive federal legislation establishing data privacy rights and corporate obligations regarding consumer data collection and processing.",
+    title: "Information Technology Act, 2000",
+    citation: "Act No. 21 of 2000",
+    jurisdiction: "India",
+    enacted: "2000-06-09",
+    summary: "Comprehensive legislation providing legal recognition for electronic transactions, digital signatures, and addressing cybercrimes. Amended in 2008 to strengthen provisions related to data protection and cybersecurity.",
     relevance: 96,
-    category: "Privacy Law",
-    sections: ["Definitions", "Consumer Rights", "Corporate Obligations", "Enforcement"]
+    category: "Cyber Law",
+    sections: ["Definitions", "Digital Signatures", "Electronic Records", "Cybercrimes", "Penalties"]
   },
   {
     id: "stat-2",
-    title: "California Consumer Financial Protection Law",
-    citation: "Cal. Fin. Code §§ 90000-90024",
-    jurisdiction: "California",
-    enacted: "2021-01-01",
-    summary: "State legislation providing enhanced consumer protections in financial services beyond federal requirements. Includes special provisions for digital financial products.",
-    relevance: 89,
-    category: "Financial Regulation",
-    sections: ["Scope", "Prohibited Practices", "Enforcement", "Remedies"]
+    title: "Personal Data Protection Bill",
+    citation: "Bill No. 373 of 2019",
+    jurisdiction: "India",
+    enacted: "Pending",
+    summary: "Proposed legislation aimed at providing a legal framework for the protection of personal data in India. Establishes a Data Protection Authority and codifies consent requirements for data processing.",
+    relevance: 94,
+    category: "Data Privacy",
+    sections: ["Consent", "Rights of Data Principal", "Data Fiduciary Obligations", "Penalties", "Exemptions"]
   },
   {
     id: "stat-3",
-    title: "Corporate Transparency Act",
-    citation: "31 U.S.C. §§ 5336",
-    jurisdiction: "Federal",
-    enacted: "2021-01-01",
-    summary: "Requires corporations and LLCs to report beneficial ownership information to FinCEN to prevent illicit use of shell companies.",
-    relevance: 82,
+    title: "Companies Act, 2013",
+    citation: "Act No. 18 of 2013",
+    jurisdiction: "India",
+    enacted: "2013-08-29",
+    summary: "Modernized legislation governing the incorporation, regulation and dissolution of companies in India. Includes provisions for corporate social responsibility, class action suits, and enhanced disclosure requirements.",
+    relevance: 88,
     category: "Corporate Law",
-    sections: ["Reporting Requirements", "Beneficial Owner Definition", "Penalties", "Exceptions"]
+    sections: ["Incorporation", "Directors", "Financial Statements", "Corporate Governance", "Winding Up"]
   },
   {
     id: "stat-4",
-    title: "New York SHIELD Act",
-    citation: "N.Y. Gen. Bus. Law § 899-aa, 899-bb",
-    jurisdiction: "New York",
-    enacted: "2020-03-21",
-    summary: "State cybersecurity law requiring businesses with New York residents' private information to implement data security programs and breach notification protocols.",
-    relevance: 85,
-    category: "Cybersecurity",
-    sections: ["Data Security Requirements", "Breach Notification", "Penalties", "Safe Harbors"]
+    title: "Consumer Protection Act, 2019",
+    citation: "Act No. 35 of 2019",
+    jurisdiction: "India",
+    enacted: "2019-08-09",
+    summary: "Updated legislation replacing the Consumer Protection Act, 1986. Introduces provisions for e-commerce, product liability, and establishes the Central Consumer Protection Authority for enforcing consumer rights.",
+    relevance: 86,
+    category: "Consumer Law",
+    sections: ["Consumer Rights", "E-commerce", "Product Liability", "Consumer Disputes", "Penalties"]
+  },
+  {
+    id: "stat-5",
+    title: "Constitution of India",
+    citation: "Adopted on 26 November 1949",
+    jurisdiction: "India",
+    enacted: "1950-01-26",
+    summary: "The supreme law of India that establishes the framework defining fundamental political principles, establishes the structure, procedures, powers and duties of government institutions, and sets out fundamental rights.",
+    relevance: 98,
+    category: "Constitutional Law",
+    sections: ["Fundamental Rights", "Directive Principles", "Fundamental Duties", "Union Government", "State Government"]
+  },
+  {
+    id: "stat-6",
+    title: "Indian Penal Code, 1860",
+    citation: "Act No. 45 of 1860",
+    jurisdiction: "India",
+    enacted: "1860-10-06",
+    summary: "Primary criminal code of India that covers all substantive aspects of criminal law. Defines offenses and prescribes punishments for various crimes.",
+    relevance: 92,
+    category: "Criminal Law",
+    sections: ["General Explanations", "Offences Against the State", "Offences Against the Human Body", "Offences Against Property", "Criminal Conspiracy"]
   }
 ];
 
-// Sample legal article data
+// Sample Indian legal article data
 const SAMPLE_ARTICLES = [
   {
     id: "art-1",
-    title: "The Evolution of Data Privacy Law: Federal and State Approaches",
-    author: "Jennifer R. Williams, J.D.",
-    journal: "Harvard Law Review",
-    date: "2024-02-15",
-    summary: "Comparative analysis of federal and state approaches to data privacy regulation, with focus on CCPA, GDPR influences, and emerging federal framework.",
-    relevance: 93,
-    topics: ["Data Privacy", "Comparative Law", "Regulatory Frameworks"],
-    citations: 24
+    title: "The Evolution of Data Privacy Law in India: From IT Act to the PDP Bill",
+    author: "Dr. Swati Sharma, LL.D.",
+    journal: "Indian Journal of Law and Technology",
+    date: "2023-11-15",
+    summary: "Comprehensive analysis of the development of data privacy jurisprudence in India, from the Information Technology Act amendments to the proposed Personal Data Protection framework and its implications for businesses.",
+    relevance: 95,
+    topics: ["Data Privacy", "Information Technology", "Constitutional Law"],
+    citations: 42
   },
   {
     id: "art-2",
-    title: "Corporate Liability Standards in the Age of AI",
-    author: "Michael T. Chen, Ph.D., J.D.",
-    journal: "Stanford Technology Law Review",
-    date: "2023-11-28",
-    summary: "Exploration of emerging liability standards for corporations deploying AI systems, including regulatory gaps and proposed governance frameworks.",
-    relevance: 90,
-    topics: ["Artificial Intelligence", "Corporate Liability", "Technology Law"],
-    citations: 31
+    title: "Judicial Review and the Basic Structure Doctrine: Kesavananda Bharati's Enduring Legacy",
+    author: "Prof. Rajesh Mehta, Ph.D.",
+    journal: "Supreme Court Cases Journal",
+    date: "2023-08-22",
+    summary: "Exploration of the evolution and application of the Basic Structure Doctrine in Indian constitutional jurisprudence since the landmark Kesavananda Bharati judgment of 1973.",
+    relevance: 93,
+    topics: ["Constitutional Law", "Judicial Review", "Basic Structure Doctrine"],
+    citations: 38
   },
   {
     id: "art-3",
-    title: "Climate Change Litigation: New Theories of Recovery",
-    author: "Sarah J. Martinez, LL.M.",
-    journal: "Environmental Law Quarterly",
-    date: "2024-01-10",
-    summary: "Analysis of novel legal theories being employed in climate litigation against corporate entities, including public nuisance and consumer protection claims.",
-    relevance: 85,
-    topics: ["Environmental Law", "Climate Litigation", "Corporate Liability"],
-    citations: 18
+    title: "Environmental Jurisprudence in India: The Role of Public Interest Litigation",
+    author: "Arundhati Sen, LL.M.",
+    journal: "Indian Law Review",
+    date: "2023-09-10",
+    summary: "Analysis of how Public Interest Litigation has shaped environmental protection in India through landmark judgments of the Supreme Court and National Green Tribunal.",
+    relevance: 90,
+    topics: ["Environmental Law", "Public Interest Litigation", "Sustainable Development"],
+    citations: 31
+  },
+  {
+    id: "art-4",
+    title: "The GST Regime in India: Constitutional Challenges and Judicial Interpretations",
+    author: "Dr. Vikram Agarwal, J.D.",
+    journal: "National Tax Journal of India",
+    date: "2023-07-30",
+    summary: "Critical examination of the constitutional framework of the Goods and Services Tax in India and key judicial decisions interpreting its implementation and scope.",
+    relevance: 88,
+    topics: ["Tax Law", "Constitutional Law", "GST"],
+    citations: 27
+  },
+  {
+    id: "art-5",
+    title: "Digital Justice Delivery in India: E-Courts Project and Beyond",
+    author: "Justice (Retd.) Pradeep Kumar Mishra",
+    journal: "Journal of the Indian Law Institute",
+    date: "2023-10-05",
+    summary: "Comprehensive review of the digitization of court processes in India, challenges in implementation, and recommendations for enhancing access to justice through technology.",
+    relevance: 87,
+    topics: ["Judicial Administration", "Legal Technology", "Access to Justice"],
+    citations: 25
   }
 ];
 
@@ -183,49 +251,52 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [relevanceRange, setRelevanceRange] = useState([70, 100]);
-  const [dateRangeYears, setDateRangeYears] = useState([2020, 2024]);
+  const [dateRangeYears, setDateRangeYears] = useState([1950, 2024]);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [searchConfidence, setSearchConfidence] = useState(0);
   const [advancedMode, setAdvancedMode] = useState(false);
   const [isAiAnalysisEnabled, setIsAiAnalysisEnabled] = useState(true);
 
-  // Jurisdictions filter options
+  // Jurisdictions filter options for India
   const jurisdictions = [
-    { id: "federal", label: "Federal" },
-    { id: "state", label: "State" },
-    { id: "international", label: "International" },
-    { id: "california", label: "California" },
-    { id: "new-york", label: "New York" },
-    { id: "texas", label: "Texas" },
-    { id: "florida", label: "Florida" }
+    { id: "india", label: "India (All)" },
+    { id: "supreme", label: "Supreme Court" },
+    { id: "high", label: "High Courts" },
+    { id: "district", label: "District Courts" },
+    { id: "tribunals", label: "Tribunals" },
+    { id: "delhi", label: "Delhi" },
+    { id: "maharashtra", label: "Maharashtra" },
+    { id: "karnataka", label: "Karnataka" }
   ];
 
-  // Topic filters
+  // Topic filters relevant to Indian law
   const topicFilters = [
+    { id: "constitutional", label: "Constitutional Law", checked: false },
+    { id: "criminal", label: "Criminal Law", checked: false },
     { id: "corporate", label: "Corporate Law", checked: false },
-    { id: "contract", label: "Contract Law", checked: false },
     { id: "ip", label: "Intellectual Property", checked: false },
     { id: "data-privacy", label: "Data Privacy", checked: false },
-    { id: "employment", label: "Employment Law", checked: false },
+    { id: "tax", label: "Taxation", checked: false },
     { id: "environmental", label: "Environmental Law", checked: false },
-    { id: "regulatory", label: "Regulatory Compliance", checked: false }
+    { id: "family", label: "Family Law", checked: false },
+    { id: "arbitration", label: "Arbitration", checked: false }
   ];
 
-  // Court filters
+  // Court filters for Indian judiciary
   const courtFilters = [
     { id: "supreme", label: "Supreme Court", checked: false },
-    { id: "appellate", label: "Appellate Courts", checked: false },
+    { id: "high", label: "High Courts", checked: false },
     { id: "district", label: "District Courts", checked: false },
-    { id: "state-supreme", label: "State Supreme Courts", checked: false },
-    { id: "state-appellate", label: "State Appellate Courts", checked: false },
-    { id: "administrative", label: "Administrative Tribunals", checked: false }
+    { id: "ngt", label: "National Green Tribunal", checked: false },
+    { id: "ncdrc", label: "National Consumer Disputes Redressal Commission", checked: false },
+    { id: "tribunals", label: "Other Tribunals", checked: false }
   ];
 
   // Load example data on component mount
   useEffect(() => {
     if (searchQuery === '') {
       // Pre-fill with example search term
-      setSearchQuery('data privacy corporate compliance');
+      setSearchQuery('right to privacy data protection');
     }
   }, []);
 
@@ -266,7 +337,8 @@ const Search = () => {
       // Filter by jurisdiction if selected
       if (jurisdiction) {
         results = results.filter((result: any) => 
-          result.jurisdiction.toLowerCase() === jurisdiction.toLowerCase()
+          result.jurisdiction?.toLowerCase().includes(jurisdiction.toLowerCase()) ||
+          (result.court && result.court.toLowerCase().includes(jurisdiction.toLowerCase()))
         );
       }
 
@@ -285,6 +357,9 @@ const Search = () => {
           case 'last-10-years':
             yearCutoff = currentYear - 10;
             break;
+          case 'post-independence':
+            yearCutoff = 1950;
+            break;
           default:
             yearCutoff = 0;
         }
@@ -297,9 +372,36 @@ const Search = () => {
         }
       }
 
+      // Filter by relevance range if in advanced mode
+      if (advancedMode) {
+        results = results.filter((result: any) => 
+          result.relevance >= relevanceRange[0] && result.relevance <= relevanceRange[1]
+        );
+      }
+
       setSearchResults(results);
       setIsSearching(false);
     }, 1200);
+  };
+
+  // AI analysis for Indian cases
+  const getAiAnalysis = (result: any) => {
+    if (contentType === 'cases') {
+      const courtLevel = result.court.includes('Supreme') ? 'Supreme Court' : 
+                         result.court.includes('High') ? 'High Court' : 'Other Court';
+      
+      if (courtLevel === 'Supreme Court') {
+        return `This ${result.tags[0]} case established significant precedent in ${result.tags.join(', ')}. It has been widely cited in subsequent judgments and has shaped Indian jurisprudence on these issues.`;
+      } else if (courtLevel === 'High Court') {
+        return `This ${result.tags[0]} case provides important interpretations of statutory provisions and constitutional principles relevant to your query. The judgment has been followed by several lower courts.`;
+      } else {
+        return `This case addresses specific factual scenarios relevant to your search and applies established legal principles in the context of ${result.tags.join(', ')}.`;
+      }
+    } else if (contentType === 'statutes') {
+      return `This legislation is central to the Indian legal framework on ${result.category}. Recent amendments have enhanced its scope and enforcement mechanisms, making it highly relevant to current regulatory compliance.`;
+    } else { // articles
+      return `This scholarly analysis provides valuable insights on recent developments in ${result.topics[0]} with particular relevance to the Indian legal context. The author is a recognized authority in this field.`;
+    }
   };
 
   return (
@@ -307,10 +409,10 @@ const Search = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            AVENIX.PRO Legal Intelligence
+            AVENIX.PRO Indian Legal Intelligence
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            AI-powered legal research across cases, statutes, and legal scholarship with neural network analysis.
+            AI-powered legal research across Indian cases, statutes, and legal scholarship with neural network analysis.
           </p>
         </div>
 
@@ -323,7 +425,7 @@ const Search = () => {
                 </div>
                 <Input
                   type="text"
-                  placeholder="Search legal concepts, cases, statutes, or regulations..."
+                  placeholder="Search Indian cases, statutes, or legal articles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 shadow-sm bg-white border-transparent focus:border-primary/30 h-12 text-base backdrop-blur-sm"
@@ -436,9 +538,9 @@ const Search = () => {
                     <SelectContent>
                       <SelectItem value="">All Courts</SelectItem>
                       <SelectItem value="supreme">Supreme Court</SelectItem>
-                      <SelectItem value="appellate">Appellate Courts</SelectItem>
+                      <SelectItem value="high">High Courts</SelectItem>
                       <SelectItem value="district">District Courts</SelectItem>
-                      <SelectItem value="state">State Courts</SelectItem>
+                      <SelectItem value="tribunals">Tribunals</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -457,6 +559,7 @@ const Search = () => {
                       <SelectItem value="last-year">Last Year</SelectItem>
                       <SelectItem value="last-5-years">Last 5 Years</SelectItem>
                       <SelectItem value="last-10-years">Last 10 Years</SelectItem>
+                      <SelectItem value="post-independence">Post-Independence (After 1950)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -516,7 +619,7 @@ const Search = () => {
                     <AccordionTrigger className="py-2 text-sm font-medium">
                       <div className="flex items-center">
                         <MessagesSquare className="h-4 w-4 mr-2 text-primary" />
-                        Topic Filters
+                        Legal Topic Filters
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
@@ -572,12 +675,12 @@ const Search = () => {
                           <Label htmlFor="include-dissents" className="text-sm">Include Dissents</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="overturned" />
-                          <Label htmlFor="overturned" className="text-sm">Include Overturned</Label>
+                          <Checkbox id="landmark-only" />
+                          <Label htmlFor="landmark-only" className="text-sm">Landmark Cases Only</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox id="cited-by" defaultChecked />
-                          <Label htmlFor="cited-by" className="text-sm">Sort by Citations</Label>
+                          <Checkbox id="constitution-bench" />
+                          <Label htmlFor="constitution-bench" className="text-sm">Constitution Bench</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox id="semantic-search" defaultChecked />
@@ -602,7 +705,7 @@ const Search = () => {
                 <span className="text-primary">{searchConfidence}%</span> confidence
               </div>
             </div>
-            <Progress value={searchConfidence} className="h-1 bg-gray-100" />
+            <Progress value={searchConfidence} className="h-1 bg-gray-100" indicatorClassName="bg-primary" />
             
             <div className="space-y-3">
               {[1, 2, 3, 4].map((_, index) => (
@@ -692,8 +795,7 @@ const Search = () => {
                           AI Analysis
                         </div>
                         <p className="text-sm text-gray-600">
-                          This case establishes important precedent for contract interpretation in technology contexts. 
-                          It has been cited extensively in recent litigation around ambiguous terms in digital agreements.
+                          {getAiAnalysis(result)}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
                           <div className="text-xs font-medium">Relevance:</div>
@@ -708,7 +810,11 @@ const Search = () => {
                       </div>
                     )}
                   </CardContent>
-                  <CardFooter className="border-t border-gray-100 pt-3 justify-end">
+                  <CardFooter className="border-t border-gray-100 pt-3 justify-between">
+                    <div className="flex items-center text-xs text-gray-500">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      {result.jurisdiction}
+                    </div>
                     <Button variant="outline" size="sm" className="text-xs bg-white">
                       View Full Case
                       <ArrowRight className="ml-2 h-3 w-3" />
@@ -752,7 +858,7 @@ const Search = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        Enacted: {new Date(result.enacted).toLocaleDateString()}
+                        Enacted: {result.enacted === 'Pending' ? 'Pending' : new Date(result.enacted).toLocaleDateString()}
                       </div>
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4" />
@@ -776,8 +882,7 @@ const Search = () => {
                           AI Analysis
                         </div>
                         <p className="text-sm text-gray-600">
-                          This statute introduced significant compliance requirements for organizations. 
-                          Key provisions focus on {result.category.toLowerCase()} standards that affect most client scenarios.
+                          {getAiAnalysis(result)}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
                           <div className="text-xs font-medium">Relevance:</div>
@@ -861,8 +966,7 @@ const Search = () => {
                           AI Analysis
                         </div>
                         <p className="text-sm text-gray-600">
-                          This article provides valuable insights on emerging legal trends in {result.topics[0].toLowerCase()}.
-                          The author is a recognized authority with several cited publications in the field.
+                          {getAiAnalysis(result)}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
                           <div className="text-xs font-medium">Relevance:</div>
