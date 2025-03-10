@@ -10,7 +10,7 @@ const AppLayout = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   useEffect(() => {
-    // Simulate a page transition effect
+    // Create page transition effect on route change
     setIsTransitioning(true);
     const timer = setTimeout(() => {
       setIsTransitioning(false);

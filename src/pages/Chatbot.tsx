@@ -1,22 +1,17 @@
 
 import { useState } from "react";
-import { Brain, Zap, MessageCircle, LayoutDashboard, Menu } from "lucide-react";
+import { Brain, Zap, MessageCircle, LayoutDashboard, Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Message, Feature, UploadedDocument } from "@/types/chat";
 import { generateResponse } from "@/utils/chatUtils";
-import { useIsMobile } from "@/hooks/use-mobile";
-import Sidebar from "../components/layout/Sidebar";
-import Header from "../components/layout/Header";
-import Features from "@/components/chat/Features";
 import ChatHeader from "@/components/chat/ChatHeader";
 import ChatContainer from "@/components/chat/ChatContainer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Chatbot = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isMobile = useIsMobile();
   const { toast } = useToast();
 
   const features: Feature[] = [
@@ -110,52 +105,40 @@ const Chatbot = () => {
     });
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-white">
-      {isMobile && (
-        <button
-          onClick={toggleSidebar}
-          className="fixed top-4 left-4 z-50 p-2 glass-card rounded-lg"
-        >
-          <Menu className="h-6 w-6 text-neutral-600" />
-        </button>
-      )}
-      
-      <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block`}>
-        <Sidebar />
-      </div>
-      <Header />
-      
-      <main className={`transition-all duration-300 ${isMobile ? 'ml-0 px-4' : 'md:ml-64 px-8'} pt-16 md:pt-20`}>
-        <div className="max-w-6xl mx-auto">
-          <ChatHeader />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {features.map((feature, index) => (
-              <div key={index} className="glass-card p-4 hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20">
-                    <feature.icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-sm gradient-text">{feature.title}</h3>
-                </div>
-                <p className="text-xs text-neutral-600">{feature.description}</p>
-              </div>
-            ))}
+    <div className="page-container fade-in">
+      <div className="page-header">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-3 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl shadow-md">
+            <Bot className="h-6 w-6 text-primary" />
           </div>
-          <ChatContainer
-            messages={messages}
-            documents={documents}
-            message={message}
-            setMessage={setMessage}
-            handleSend={handleSend}
-            handleFileUpload={handleFileUpload}
-          />
+          <h1 className="page-title">Legal Assistant</h1>
         </div>
-      </main>
+        <p className="page-description">AI-powered legal assistance and document analysis</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {features.map((feature, index) => (
+          <Card key={index} className="bg-white/50 backdrop-blur-sm border-none shadow-lg hover:shadow-xl transition-all hover:scale-105">
+            <CardHeader>
+              <feature.icon className="h-8 w-8 text-primary mb-2" />
+              <CardTitle className="text-lg">{feature.title}</CardTitle>
+              <CardDescription>{feature.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+
+      <ChatHeader />
+      
+      <ChatContainer
+        messages={messages}
+        documents={documents}
+        message={message}
+        setMessage={setMessage}
+        handleSend={handleSend}
+        handleFileUpload={handleFileUpload}
+      />
     </div>
   );
 };
