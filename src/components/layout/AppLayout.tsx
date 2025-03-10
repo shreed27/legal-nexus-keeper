@@ -28,7 +28,7 @@ const AppLayout = () => {
           isMobile ? 'ml-0' : 'ml-64'
         } pt-20 px-4 md:px-8`}
       >
-        <div className={`max-w-7xl mx-auto transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-3' : 'opacity-100 translate-y-0'}`}>
           <Outlet />
         </div>
       </main>

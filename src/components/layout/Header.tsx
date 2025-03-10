@@ -45,54 +45,65 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 right-0 h-20 flex items-center justify-end px-8 bg-white/80 backdrop-blur-md border-b border-neutral-200/50 z-10 animate-fade-in ml-0 md:ml-64 w-full md:w-[calc(100%-16rem)]">
+    <header className="fixed top-0 right-0 h-20 flex items-center justify-end px-8 bg-white/80 backdrop-blur-md border-b border-neutral-200/50 z-40 animate-fade-in ml-0 md:ml-64 w-full md:w-[calc(100%-16rem)]">
       <div className="flex items-center space-x-6">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="relative p-2 rounded-full hover:bg-neutral-100 transition-colors">
+            <button className="relative p-2 rounded-full bg-white/80 hover:bg-neutral-100 transition-colors shadow-sm">
               <Bell size={20} className="text-neutral-600" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
               )}
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-80 bg-white/95 backdrop-blur-md border border-white/60">
+            <DropdownMenuLabel className="text-primary">Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {notifications.length === 0 && (
-              <DropdownMenuItem className="text-center p-4 text-neutral-600">
-                No new notifications
-              </DropdownMenuItem>
+              <div className="text-center p-6 text-neutral-600">
+                <Bell className="w-10 h-10 text-neutral-400 mx-auto mb-2" />
+                <p className="font-medium">No new notifications</p>
+                <p className="text-sm text-neutral-500">You're all caught up!</p>
+              </div>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center space-x-3 p-2 rounded-full hover:bg-neutral-100 transition-colors">
+            <button className="flex items-center space-x-3 p-2 rounded-full bg-white/80 hover:bg-neutral-100 transition-colors shadow-sm">
               <User size={20} className="text-neutral-600" />
-              <span className="font-medium text-neutral-600">{userData.name}</span>
+              <span className="font-medium text-neutral-700">{userData.name}</span>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-72">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-72 bg-white/95 backdrop-blur-md border border-white/60">
+            <DropdownMenuLabel className="text-primary">My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="px-4 py-3">
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm font-medium text-neutral-900">{userData.name}</p>
-                  <p className="text-sm text-neutral-600">{userData.email}</p>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                    <User className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-neutral-900">{userData.name}</p>
+                    <p className="text-sm text-neutral-600">{userData.email}</p>
+                  </div>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 pt-2 border-t border-neutral-100">
                   <p className="text-xs text-neutral-500">Role</p>
-                  <p className="text-sm text-neutral-700">{userData.role}</p>
+                  <p className="text-sm text-neutral-700 font-medium">{userData.role}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs text-neutral-500">Member since</p>
-                  <p className="text-sm text-neutral-700">{userData.joinedDate}</p>
+                  <p className="text-sm text-neutral-700 font-medium">{userData.joinedDate}</p>
                 </div>
               </div>
             </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer text-red-500 font-medium">
+              Sign out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

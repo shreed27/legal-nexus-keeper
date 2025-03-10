@@ -2,16 +2,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  Calendar, 
+  Layout, 
   FileText, 
   Search, 
-  Layout, 
-  ChevronLeft, 
-  ChevronRight, 
-  FolderOpen,
-  Shield,
-  Bot,
+  FolderOpen, 
+  Shield, 
+  Bot, 
   FileEdit,
+  ChevronLeft, 
+  ChevronRight,
   X
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -62,7 +61,7 @@ const Sidebar = () => {
         {!collapsed && (
           <span 
             onClick={() => navigate('/')} 
-            className="text-xl font-bold cursor-pointer gradient-text hover:opacity-80 transition-opacity"
+            className="text-xl font-bold cursor-pointer text-neutral-800 hover:opacity-80 transition-opacity"
           >
             AVENIX.PRO
           </span>
@@ -85,19 +84,29 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <nav className="mt-8">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`flex items-center px-6 py-4 transition-colors hover:bg-neutral-100 ${
-              location.pathname === item.path ? 'bg-primary/10 border-r-4 border-primary' : ''
-            }`}
-          >
-            <item.icon size={24} className={location.pathname === item.path ? 'text-primary' : ''} />
-            {!collapsed && <span className="ml-4">{item.label}</span>}
-          </Link>
-        ))}
+      <nav className="mt-6">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center px-6 py-4 transition-colors hover:bg-blue-50/50 
+                ${isActive ? 'bg-primary/10 border-r-4 border-primary' : ''}`}
+            >
+              <item.icon 
+                size={24} 
+                className={`transition-colors duration-300 ${isActive ? 'text-primary' : 'text-neutral-600'}`} 
+              />
+              {!collapsed && (
+                <span className={`ml-4 font-medium ${isActive ? 'text-primary' : ''}`}>
+                  {item.label}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );
