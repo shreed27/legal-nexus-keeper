@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import TemplateGallery from "@/components/document-drafting/TemplateGallery";
 import DocumentGenerator from "@/components/document-drafting/DocumentGenerator";
 import RecentDocuments from "@/components/document-drafting/RecentDocuments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileEdit, Template, FileText } from "lucide-react";
+import { FileEdit, Files, FileText } from "lucide-react";
 
 const DocumentDrafting = () => {
   const [activeTab, setActiveTab] = useState("templates");
@@ -41,7 +40,7 @@ const DocumentDrafting = () => {
             value="templates"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:text-primary"
           >
-            <Template className="w-4 h-4 mr-2" />
+            <Files className="w-4 h-4 mr-2" />
             Templates
           </TabsTrigger>
           <TabsTrigger 
