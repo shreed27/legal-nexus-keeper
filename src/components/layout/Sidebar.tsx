@@ -78,9 +78,9 @@ const Sidebar = () => {
               className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">A</span>
+                <span className="text-white font-bold text-sm">L</span>
               </div>
-              <span className="text-xl font-bold gradient-text">AVENIX</span>
+              <span className="text-xl font-bold gradient-text">LawGPT</span>
             </div>
           )}
           
