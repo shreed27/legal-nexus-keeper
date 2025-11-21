@@ -8,7 +8,7 @@ const Navbar = () => (
       <div className="flex items-center justify-between h-16">
         <div className="flex items-center gap-2">
           <img src="/lovable-uploads/e9bf099f-9fa9-4c93-963c-44cd8f6fd504.png" alt="Logo" className="h-8" />
-          <span className="text-xl font-bold gradient-text">AVENIX.PRO</span>
+          <span className="text-xl font-bold gradient-text">LawGPT</span>
         </div>
         <div className="hidden md:flex items-center gap-8">
           <button className="text-gray-600 hover:text-gray-900">Product</button>
@@ -193,7 +193,7 @@ const Landing = () => {
           </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
             <div className="flex flex-col md:flex-row items-center justify-between">
-              <p className="text-gray-600 text-center">© 2024 AVENIX.PRO. All rights reserved.</p>
+              <p className="text-gray-600 text-center">© 2024 LawGPT. All rights reserved.</p>
               <div className="flex gap-4 mt-4 md:mt-0">
                 <a href="#" className="text-primary hover:text-primary-dark">Twitter</a>
                 <a href="#" className="text-primary hover:text-primary-dark">LinkedIn</a>
